@@ -180,11 +180,9 @@ Frame_Butt.pack(side=BOTTOM, fill=X, pady=2)
 List_Rq = Pmw.ComboBox(W_P, dropdown=0,
                        label_text='Requêtes z\'enregistrées:',
                        labelpos='n', 
-                       postcommand=db_Rq,
+                       scrolledlist_items=db_Rq,
                        listheight=20, selectioncommand=Click_Rq_Insert)
 List_Rq.pack()
-
-#scrolledlist_items=db_Rq,
 
 # Contenu des differentes Frames
 
