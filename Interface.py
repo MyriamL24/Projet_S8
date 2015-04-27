@@ -13,6 +13,8 @@ import Base
 import ttk
 import time
 import base64
+import Statistiques
+import Stock
 
 W_P = Tk()
 Pmw.initialise(W_P)
@@ -76,6 +78,9 @@ def Click_Rq_Insert():
 
 def Send_Dat(query, user, pwd):
         data = Base.connexion(query,user,pwd)
+        Stock.serialize("data.pkl", data)
+
+        print data
 
         # Création d'une fenêtre tkinter
         W_Data = Toplevel()
@@ -84,7 +89,7 @@ def Send_Dat(query, user, pwd):
         Frame_Data = Frame(W_Data)
         Frame_Data.pack()
         Frame_Data.dataCols = data[1]
-        Frame_Data.tree = ttk.Treeview(Frame_Data,columns=Frame_Data.dataCols, show='headings')
+        Frame_Data.tree = ttk.Treeview(Frame_Data, columns=Frame_Data.dataCols, show='headings')
 
         #Scrollbars
         xsb = ttk.Scrollbar(Frame_Data,orient=HORIZONTAL, command=Frame_Data.tree.xview)
@@ -103,6 +108,23 @@ def Send_Dat(query, user, pwd):
         for item in data[0]:
             Frame_Data.tree.insert('', 'end', values=item)
         Log(("Query sent : "+query))
+
+        menubar = Menu(W_Data)
+
+        menu1 = Menu(menubar, tearoff=0)
+        menu1.add_command(label="Shapiro", command=Statistiques.Shapiro)
+        menu1.add_command(label="Student", command=Statistiques.Student)
+        menu1.add_command(label="Kruskall-Wallis", command=Statistiques.Kruskall_wallis)
+        menu1.add_command(label="Wilcoxon", command=Statistiques.Wilcoxon)
+        menubar.add_cascade(label="Statistiques", menu=menu1)
+
+        menu2 = Menu(menubar, tearoff=0)
+        menu2.add_command(label="Histograms", command=alert)
+        menu2.add_command(label="Dot-Plot", command=alert)
+        menu2.add_command(label="Box-Plot", command=alert)
+        menubar.add_cascade(label="Graphiques", menu=menu2)
+
+        W_Data.config(menu=menubar)
 
 
 def Click_Rq_Valid():
