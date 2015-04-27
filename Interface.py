@@ -7,15 +7,15 @@
 
 from Tkinter import *
 from tkMessageBox import *
-import Stock
 import Pmw
 import anydbm
 import Base
 import ttk
+import time
+import base64
 
 W_P = Tk()
 Pmw.initialise(W_P)
-
 
 W_P.title('Better bet on Bacon\'')
 W_P.geometry("550x250+50+50")
@@ -29,24 +29,53 @@ db_Rq = anydbm.open('Requetes.dbm', 'c')
 def alert():
     showinfo("alerte", "Bravo!")
 
+
 def Log(info):
     log = open("Log.txt", "a")
     Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
-    log.write(Date + ' : ' + info + '\n')
+    log.write(Date + ' : ' + info)
     log.close()
 
 
-def Click_Rq_Insert(tag):  # Permet l'affichage de la liste des requetes
-    if tag:
+def Login():
+
+    def Valid_Login(*w):
+        username = Entry_Nam_User.get()
+        pswd = base64.b64encode(Entry_Pswd.get())
+        Log("Login "+username)
+        Send_Dat((Rq.get("1.0", END)), username, pswd)
+        W_Login.destroy()     
+
+    W_Login=Toplevel()
+    W_Login.title("Connexion")
+
+    label_Nam_User = Label(W_Login, text='Username ')
+    label_Nam_User.grid(row=0, column=0)
+    Entry_Nam_User = Entry(W_Login, width=20)
+    Entry_Nam_User.grid(row=0, column=1)
+
+    label_Pswd = Label(W_Login, text='Password ')
+    label_Pswd.grid(row=1, column=0)
+    Entry_Pswd = Entry(W_Login, width=20,show='*')
+    Entry_Pswd.grid(row=1, column=1)
+
+    Entry_Pswd.bind("<Return>", Valid_Login)
+
+    Butt_Valid_Nam = Button(
+        W_Login, text='Ok', relief=GROOVE, command=Valid_Login)
+    Butt_Valid_Nam.grid(row=1, column=2)
+
+
+def Click_Rq_Insert():  
+    try:
         Rq.delete("1.0", END)
-        Rq.insert(INSERT, db_Rq[tag])
-    else:
-        showerror("Alert", "Veuillez entrer une requête")
+        Rq.insert(INSERT, db_Rq[List_Rq.getvalue()[0]])
+    except IndexError:
+        showerror("Alerte", "Aucune requête sélectionnée")
 
 
-def Click_Rq_Valid():
-    def Send_Dat(query):
-        data = Base.connexion(query)
+def Send_Dat(query, user, pwd):
+        data = Base.connexion(query,user,pwd)
 
         # Création d'une fenêtre tkinter
         W_Data = Toplevel()
@@ -73,15 +102,17 @@ def Click_Rq_Valid():
 
         for item in data[0]:
             Frame_Data.tree.insert('', 'end', values=item)
+        Log(("Query sent : "+query))
 
-        # app.mainloop()
-    
+
+def Click_Rq_Valid():
+
     query = Rq.get("1.0", END)
     Rq.tag_add(SEL, "1.0", END)
     if len(query) == 1:
         Label_Error_Txt.set("Requête non-envoyée : Champs requête vide")
     else :
-        Send_Dat(query)
+        Login()
 
 
 def Seriz_Rq(Nam_Rq):
@@ -93,18 +124,23 @@ def Seriz_Rq(Nam_Rq):
     else:
         db_Rq[Nam_Rq] = Rq.get("1.0", END).encode('utf8')
         Label_Error_Txt.set("Requête enregistrée...")
+        Log(("Query saved : "+Nam_Rq+":"+db_Rq[Nam_Rq]))
 
 
 def Del_Rq():
-    del db_Rq[List_Rq.get()]
-    print db_Rq
+    try :
+        del db_Rq[List_Rq.getvalue()[0]]
+        List_Rq.setlist(db_Rq)
+    except IndexError:
+        pass
 
 
 def W_Nam_Rq():
 
-    def Get_Nam_Rq():
+    def Get_Nam_Rq(*tag):
         Nam_Rq = Entry_Nam_Rq.get()
         Seriz_Rq(Nam_Rq)
+        List_Rq.setlist(db_Rq)
         W_Entry.destroy()
 
     W_Entry = Toplevel()
@@ -112,7 +148,7 @@ def W_Nam_Rq():
     label_Nam_Rq.grid(row=0, column=0)
     Entry_Nam_Rq = Entry(W_Entry, width=20)
     Entry_Nam_Rq.grid(row=1, column=0)
-    # Entry_Nam_Rq.bind("<Return>", Get_Nam_Rq)
+    Entry_Nam_Rq.bind("<Return>", Get_Nam_Rq)
     Butt_Valid_Nam = Button(
         W_Entry, text='Ok', relief=GROOVE, command=Get_Nam_Rq)
     Butt_Valid_Nam.grid(row=1, column=1)
@@ -156,9 +192,9 @@ menu2.add_separator()
 menu2.add_command(label="Ajouter au PDF", command=alert)
 menubar.add_cascade(label="Editer", menu=menu2)
 
-menu4 = Menu(menubar, tearoff=0)
-menu4.add_command(label="A propos", command=alert)
-menubar.add_cascade(label="Aide", menu=menu4)
+menu3 = Menu(menubar, tearoff=0)
+menu3.add_command(label="A propos", command=alert)
+menubar.add_cascade(label="Aide", menu=menu3)
 
 W_P.config(menu=menubar)
 
@@ -177,11 +213,13 @@ Frame_Rq.pack(side=LEFT,fill=Y)
 Frame_Butt = Frame(Frame_Rq, bg="green")
 Frame_Butt.pack(side=BOTTOM, fill=X, pady=2)
 
-List_Rq = Pmw.ComboBox(W_P, dropdown=0,
-                       label_text='Requêtes z\'enregistrées:',
-                       labelpos='n', 
-                       scrolledlist_items=db_Rq,
-                       listheight=20, selectioncommand=Click_Rq_Insert)
+List_Rq = Pmw.ScrolledListBox(W_P,
+                items=db_Rq,
+                labelpos='n',
+                label_text='Requêtes enregistrées',
+                listbox_height = 11,
+                selectioncommand=Click_Rq_Insert)
+                
 List_Rq.pack()
 
 # Contenu des differentes Frames
