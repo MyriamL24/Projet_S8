@@ -7,14 +7,8 @@
 
 from Tkinter import *
 from tkMessageBox import *
-import Pmw
-import anydbm
-import Base
-import ttk
-import time
-import base64
-import Statistiques
-import Stock
+import anydbm, base64, Pmw, time, ttk
+import Base, Graphiques, Statistiques, Stock
 
 W_P = Tk()
 Pmw.initialise(W_P)
@@ -80,8 +74,6 @@ def Send_Dat(query, user, pwd):
         data = Base.connexion(query,user,pwd)
         Stock.serialize("data.pkl", data)
 
-        print data
-
         # Création d'une fenêtre tkinter
         W_Data = Toplevel()
         W_Data.title("Data")
@@ -116,12 +108,14 @@ def Send_Dat(query, user, pwd):
         menu1.add_command(label="Student", command=Statistiques.Student)
         menu1.add_command(label="Kruskall-Wallis", command=Statistiques.Kruskall_wallis)
         menu1.add_command(label="Wilcoxon", command=Statistiques.Wilcoxon)
+        menu1.add_command(label="Corrélation", command=Statistiques.Pearson)
         menubar.add_cascade(label="Statistiques", menu=menu1)
 
         menu2 = Menu(menubar, tearoff=0)
-        menu2.add_command(label="Histograms", command=alert)
-        menu2.add_command(label="Dot-Plot", command=alert)
-        menu2.add_command(label="Box-Plot", command=alert)
+        menu2.add_command(label="Diagramme en bâtons", command=Graphiques.diagramme_baton)
+        menu2.add_command(label="Courbe", command=alert)
+        menu2.add_command(label="Histogramme", command=alert)
+        menu2.add_command(label="Boite a moustaches", command=alert)
         menubar.add_cascade(label="Graphiques", menu=menu2)
 
         W_Data.config(menu=menubar)
