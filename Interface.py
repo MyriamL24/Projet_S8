@@ -7,8 +7,15 @@
 
 from Tkinter import *
 from tkMessageBox import *
-import anydbm, base64, Pmw, time, ttk
-import Base, Graphiques, Statistiques, Stock, Reporting
+import anydbm
+import base64
+import Pmw
+import time
+import ttk
+import Base
+import Graphiques
+import Statistiques
+import Stock
 
 W_P = Tk()
 Pmw.initialise(W_P)
@@ -29,7 +36,7 @@ def alert():
 def Log(info):
     log = open("Log.txt", "a")
     Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
-    log.write(Date + ' : ' + info)
+    log.write(Date + ' : ' + info+'\n')
     log.close()
 
 
@@ -38,11 +45,15 @@ def Login():
     def Valid_Login(*w):
         username = Entry_Nam_User.get()
         pswd = base64.b64encode(Entry_Pswd.get())
-        Log("Login "+username)
-        Send_Dat((Rq.get("1.0", END)), username, pswd)
-        W_Login.destroy()     
+        if len(username) == 0:
+            showerror("Alerte", "Entrez vos identifiants")
+            Log("Login Error")
+        else:
+            Log("Login "+username)
+            Send_Dat((Rq.get("1.0", END)), username, pswd)
+            W_Login.destroy()
 
-    W_Login=Toplevel()
+    W_Login = Toplevel()
     W_Login.title("Connexion")
 
     label_Nam_User = Label(W_Login, text='Username ')
@@ -52,7 +63,7 @@ def Login():
 
     label_Pswd = Label(W_Login, text='Password ')
     label_Pswd.grid(row=1, column=0)
-    Entry_Pswd = Entry(W_Login, width=20,show='*')
+    Entry_Pswd = Entry(W_Login, width=20, show='*')
     Entry_Pswd.grid(row=1, column=1)
 
     Entry_Pswd.bind("<Return>", Valid_Login)
@@ -62,7 +73,7 @@ def Login():
     Butt_Valid_Nam.grid(row=1, column=2)
 
 
-def Click_Rq_Insert():  
+def Click_Rq_Insert():
     try:
         Rq.delete("1.0", END)
         Rq.insert(INSERT, db_Rq[List_Rq.getvalue()[0]])
@@ -71,66 +82,68 @@ def Click_Rq_Insert():
 
 
 def Send_Dat(query, user, pwd):
-        data = Base.connexion(query,user,pwd)
+        data = Base.connexion(query, user, pwd)
         Stock.serialize("data.pkl", data)
 
-        # Création d'une fenêtre tkinter
-        W_Data = Toplevel()
-        W_Data.title("Data")
-        W_Data.geometry("550x260+50+50")
-        Frame_Data = Frame(W_Data)
-        Frame_Data.pack()
-        Frame_Data.dataCols = data[1]
-        Frame_Data.tree = ttk.Treeview(Frame_Data, columns=Frame_Data.dataCols, show='headings')
+        if data:
+            # Création d'une fenêtre tkinter
+            W_Data = Toplevel()
+            W_Data.title("Data")
+            W_Data.geometry("550x200+50+50")
 
-        #Scrollbars
-        xsb = ttk.Scrollbar(Frame_Data,orient=HORIZONTAL, command=Frame_Data.tree.xview)
-        xsb.pack(side=BOTTOM, fill=X)
-        ysb = ttk.Scrollbar(Frame_Data,orient=VERTICAL, command=Frame_Data.tree.yview)
-        ysb.pack(side=RIGHT, fill=Y)
-        
-        Frame_Data.tree.pack()
-        
-        Frame_Data.tree['yscroll'] = ysb.set
-        Frame_Data.tree['xscroll'] = xsb.set
-        
-        for c in Frame_Data.dataCols:
-            Frame_Data.tree.heading(c, text=c.title())
+            Frame_Data = Frame(W_Data)
+            Frame_Data.pack()
+            Frame_Data.dataCols = data[1]
+            Frame_Data.tree = ttk.Treeview(Frame_Data, columns=Frame_Data.dataCols, show='headings')
 
-        for item in data[0]:
-            Frame_Data.tree.insert('', 'end', values=item)
-        Log(("Query sent : "+query))
+            #Scrollbars
+            xsb = ttk.Scrollbar(Frame_Data,orient=HORIZONTAL, command=Frame_Data.tree.xview)
+            xsb.pack(side=BOTTOM, fill=X)
+            ysb = ttk.Scrollbar(Frame_Data,orient=VERTICAL, command=Frame_Data.tree.yview)
+            ysb.pack(side=RIGHT, fill=Y)
 
-        menubar = Menu(W_Data)
+            Frame_Data.tree.pack()
 
-        menu1 = Menu(menubar, tearoff=0)
-        menu1.add_command(label="Shapiro", command=Statistiques.Shapiro)
-        menu1.add_command(label="Student", command=Statistiques.Student)
-        menu1.add_command(label="Kruskall-Wallis", command=Statistiques.Kruskall_wallis)
-        menu1.add_command(label="Wilcoxon", command=Statistiques.Wilcoxon)
-        menu1.add_command(label="Corrélation", command=Statistiques.Pearson)
-        menubar.add_cascade(label="Statistiques", menu=menu1)
+            Frame_Data.tree['yscroll'] = ysb.set
+            Frame_Data.tree['xscroll'] = xsb.set
 
-        menu2 = Menu(menubar, tearoff=0)
-        menu2.add_command(label="Diagramme en bâtons", command=Graphiques.diagramme_baton)
-        menu2.add_command(label="Courbe", command=alert)
-        menu2.add_command(label="Histogramme", command=alert)
-        menu2.add_command(label="Boite a moustaches", command=alert)
-        menubar.add_cascade(label="Graphiques", menu=menu2)
+            for c in Frame_Data.dataCols:
+                Frame_Data.tree.heading(c, text=c.title())
 
-        Butt_Pdf = Button(W_Data, text="Ajouter au PDF", command=Reporting.W_Title_Pdf)
-        Butt_Pdf.pack(side=BOTTOM, padx=3)
+            for item in data[0]:
+                Frame_Data.tree.insert('', 'end', values=item)
+            Log(("Query sent : "+query))
 
+            menubar = Menu(W_Data)
 
-        W_Data.config(menu=menubar)
+            menu1 = Menu(menubar, tearoff=0)
+            menu1.add_command(label="Shapiro", command=Statistiques.Shapiro)
+            menu1.add_command(label="Student", command=Statistiques.Student)
+            menu1.add_command(label="Kruskall-Wallis", command=Statistiques.Kruskall_wallis)
+            menu1.add_command(label="Wilcoxon", command=Statistiques.Wilcoxon)
+            menu1.add_command(label="Corrélation", command=alert)
+            menubar.add_cascade(label="Statistiques", menu=menu1)
+
+            menu2 = Menu(menubar, tearoff=0)
+            menu2.add_command(label="Diagramme en bâtons", command=Graphiques.diagramme_baton)
+            menu2.add_command(label="Courbe", command=alert)
+            menu2.add_command(label="Histogramme", command=alert)
+            menu2.add_command(label="Boite a moustaches", command=alert)
+            menubar.add_cascade(label="Graphiques", menu=menu2)
+
+            W_Data.config(menu=menubar)
+        else:
+            showerror("Alerte", "Impossible de se connecter à la base")
+            Log("Query NOT sent")
 
 
 def Click_Rq_Valid():
+
     query = Rq.get("1.0", END)
     Rq.tag_add(SEL, "1.0", END)
     if len(query) == 1:
         Label_Error_Txt.set("Requête non-envoyée : Champs requête vide")
-    else :
+    else:
         Login()
 
 
@@ -147,7 +160,7 @@ def Seriz_Rq(Nam_Rq):
 
 
 def Del_Rq():
-    try :
+    try:
         del db_Rq[List_Rq.getvalue()[0]]
         List_Rq.setlist(db_Rq)
     except IndexError:
@@ -238,7 +251,7 @@ List_Rq = Pmw.ScrolledListBox(W_P,
                 label_text='Requêtes enregistrées',
                 listbox_height = 11,
                 selectioncommand=Click_Rq_Insert)
-                
+
 List_Rq.pack()
 
 # Contenu des differentes Frames
