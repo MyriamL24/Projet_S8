@@ -15,6 +15,7 @@ import ttk
 import libnDat
 import Graphiques
 import Statistiques
+import Reporting
 
 username = 'kjamart'
 pswd = base64.b64encode('')
@@ -140,6 +141,9 @@ def Send_Dat(query, user, pwd):
             menubar.add_cascade(label="Graphiques", menu=menu2)
 
             W_Data.config(menu=menubar)
+
+            Button(W_Data, text="Ajouter au PDF", command=Reporting.W_Title_Pdf(1, data)).pack(side = LEFT, fill = X)
+
         else:
             showerror("Alerte", "Impossible de se connecter à la base")
             Log("Query NOT sent")
