@@ -9,11 +9,14 @@ from Tkinter import *
 import numpy, Tkinter
 import Stock, parse
 
+histo = " "
+courbe = " "
+
 def alert():
     showinfo("alerte", "Bravo!")
 
-def affichage(fichier):
-    img = NewImage.open(fichier)
+def affichage_Image():
+    img = NewImage.open(histo)
     img.save("figure.gif", "gif")
     W_image = Tk()
     fenetre = Canvas(W_image, width="600", height ="500")
@@ -29,15 +32,23 @@ def affichage(fichier):
 def diagramme_baton():
     data =  Stock.deserialize("data.pkl")
     h = []
-    x = []
-    for i in range(len(data[0])):
-        h.append(data[0][i][0])
-        x.append(i)
+    x = [_ for _ in range(len(data[0]))]
+    for ligne in data[0]:
+        h.append(ligne[0])
      
     fig = plt.figure()
     width = 0.8
     plt.bar(x, h, width, color = 'b')
     plt.savefig('histogram.eps')
-    affichage('histogram.eps')
+    histo = "histogram.eps"
+    affichage_Image()
 
-affichage("histogram.eps")
+def courbes():
+    data = Stock.deserialize("data.pkl")
+    x = [_ for _ in range(len(data[0]))]
+    y = []
+    for ligne in data[0]:
+         y.append(ligne[0])
+
+#diagramme_baton()
+#affichage("histogram.eps")
