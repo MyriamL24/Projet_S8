@@ -8,9 +8,9 @@ import Evenement
 
 def Placement(filename, rajout, descript = '', TypeObj, tagg):
     # Dans le cas de l'insertion des données : construction d'un tableau
-        if TypeObj == 1 :
-            data = rajout
-            with open(filename, 'r+') as file:
+    if TypeObj == 1 :
+        data = rajout
+        with open(filename, 'r+') as file:
             text = file.read()
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
@@ -32,22 +32,22 @@ def Placement(filename, rajout, descript = '', TypeObj, tagg):
                     else :
                         file.write(str(val) + " & ")
             file.write("\\hline\n \\end{tabular}" + str(fin))
-            
-    # Dans le cas de l'insertion d'un graphique donc image.png
-        if TypeObj == 2 :
-            with open(filename, 'r+') as file:
+        
+# Dans le cas de l'insertion d'un graphique donc image.png
+    if TypeObj == 2 :
+        with open(filename, 'r+') as file:
             text = file.read()
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
             fin = text[i + len(tagg):]
-            
+        
 
-            file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
-            file.write("\\end{figure}" + str(fin))
+        file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
+        file.write("\\end{figure}" + str(fin))
 
-    # Dans le cas de l'insertion des résultats d'un test statistique, donc chaine de caractère simple
-        if TypeObj == 3 :
-            with open(filename, 'r+') as file:
+# Dans le cas de l'insertion des résultats d'un test statistique, donc chaine de caractère simple
+    if TypeObj == 3 :
+        with open(filename, 'r+') as file:
             text = file.read()
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
@@ -107,4 +107,4 @@ def W_Title_Pdf(TypeObj, rajout):
                         labelpos='n',
                         label_text='Titres enregistrés',
                         listbox_height=5)
-    L_Titles.pack()"""
+    L_Titles.pack()
