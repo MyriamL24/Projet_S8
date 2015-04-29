@@ -7,20 +7,59 @@ import Evenement
 
 
 def Placement(filename, rajout, descript = '', TypeObj, tagg):
-        if TypeObj == 1
-        print tagg, string 
-        with open(filename, 'r+') as file:
+    # Dans le cas de l'insertion des données : construction d'un tableau
+        if TypeObj == 1 :
+            data = rajout
+            with open(filename, 'r+') as file:
             text = file.read()
             i = text.index(tagg)
-            file.write(text[:i + len(tagg)] + "\n" + string + text[i + len(tagg):])
+            deb = text[:i + len(tagg)]
+            fin = text[i + len(tagg):]
+            file.write(deb + "\n \\begin{tabular}{|")
+            for i in range(len(data[1])):
+                file.write("c|")
+            file.write("} \n\t\\hline \n")
+            for i in data[1]:
+                if i == data[len(data)-1]:
+                    file.write(str(i) +" \\\ \n")
+                else: 
+                    file.write(str(i) + " & ")
+            file.write("\\hline \n")
+            for ligne in data[0]:
+                for val in ligne :
+                    if val == ligne[len(ligne)-1]:
+                        file.write(str(val) +" \\\ \n")
+                    else :
+                        file.write(str(val) + " & ")
+            file.write("\\hline\n \\end{tabular}" + str(fin))
+            
+    # Dans le cas de l'insertion d'un graphique donc image.png
+        if TypeObj == 2 :
+            with open(filename, 'r+') as file:
+            text = file.read()
+            i = text.index(tagg)
+            deb = text[:i + len(tagg)]
+            fin = text[i + len(tagg):]
+            
 
+            file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
+            file.write("\\end{figure}" + str(fin))
 
-def W_Title_Pdf(TypeObj):    
+    # Dans le cas de l'insertion des résultats d'un test statistique, donc chaine de caractère simple
+        if TypeObj == 3 :
+            with open(filename, 'r+') as file:
+            text = file.read()
+            i = text.index(tagg)
+            deb = text[:i + len(tagg)]
+            fin = text[i + len(tagg):]
+            file.write(deb + "\n" + rajout + str(fin))
+
+def W_Title_Pdf(TypeObj, rajout):    
 
     def Get_Titles():
             Section = str(Section_Pdf.get("1.0",END))
             Descrip= str(Text_Section.get("1.0",END))
-            Placement('file.tex', Descrip, TypeObj, Section)
+            Placement('file.tex', rajout, Descrip, TypeObj, Section)
             W_Entry.destroy()
 
     def Seriz_Titles(Nam_Title):
