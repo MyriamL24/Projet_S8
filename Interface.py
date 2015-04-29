@@ -8,7 +8,7 @@
 from Tkinter import *
 from tkMessageBox import *
 import anydbm, base64, Pmw, time, ttk
-import Base, Graphiques, Statistiques, Stock
+import Base, Graphiques, Statistiques, Stock, Reporting
 
 W_P = Tk()
 Pmw.initialise(W_P)
@@ -77,7 +77,7 @@ def Send_Dat(query, user, pwd):
         # Création d'une fenêtre tkinter
         W_Data = Toplevel()
         W_Data.title("Data")
-        W_Data.geometry("550x200+50+50")
+        W_Data.geometry("550x260+50+50")
         Frame_Data = Frame(W_Data)
         Frame_Data.pack()
         Frame_Data.dataCols = data[1]
@@ -118,11 +118,14 @@ def Send_Dat(query, user, pwd):
         menu2.add_command(label="Boite a moustaches", command=alert)
         menubar.add_cascade(label="Graphiques", menu=menu2)
 
+        Butt_Pdf = Button(W_Data, text="Ajouter au PDF", command=Reporting.W_Title_Pdf)
+        Butt_Pdf.pack(side=BOTTOM, padx=3)
+
+
         W_Data.config(menu=menubar)
 
 
 def Click_Rq_Valid():
-
     query = Rq.get("1.0", END)
     Rq.tag_add(SEL, "1.0", END)
     if len(query) == 1:
