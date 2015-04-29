@@ -15,19 +15,18 @@ courbe = " "
 def alert():
     showinfo("alerte", "Bravo!")
 
-def affichage_Image():
-    img = NewImage.open(histo)
-    img.save("figure.gif", "gif")
-    W_image = Tk()
+def affichage_Image(fichier):
+    
+    W_image = Toplevel()
     fenetre = Canvas(W_image, width="600", height ="500")
-    photo = PhotoImage(file = "figure.gif")
-    fenetre.create_image(300,250,image = photo)
+    titi = PhotoImage(file = fichier) 
+    fenetre.create_image(300,250,image = titi)
     fenetre.pack()
-    PDF = Button(W_image, text="Ajouter au PDF", command=alert)
-    PDF.pack(side=BOTTOM)
-    Quit = Button(W_image, text="Quitter", command = W_image.destroy)
-    Quit.pack()
-    W_image.mainloop()
+    Butt_Pdf = Button(W_image, text="Ajouter au PDF", command=alert)
+    Butt_Pdf.pack(side=BOTTOM)
+    Butt_Quit = Button(W_image, text="Quitter", command = W_image.destroy)
+    Butt_Quit.pack()
+    #W_image.mainloop()
     
 def diagramme_baton():
     data =  Stock.deserialize("data.pkl")
@@ -41,7 +40,10 @@ def diagramme_baton():
     plt.bar(x, h, width, color = 'b')
     plt.savefig('histogram.eps')
     histo = "histogram.eps"
-    affichage_Image()
+    #plt.show()
+    img = NewImage.open("histogram.eps")    
+    img.save("figure.gif", "gif")
+    affichage_Image("figure.gif")
 
 def courbes():
     data = Stock.deserialize("data.pkl")
@@ -51,4 +53,4 @@ def courbes():
          y.append(ligne[0])
 
 #diagramme_baton()
-#affichage("histogram.eps")
+#affichage_Image()
