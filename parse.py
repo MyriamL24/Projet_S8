@@ -1,7 +1,4 @@
 # -*- coding: utf8 -*-
-import Tkinter as tk
-import ttk
-
 def parse_choix(data, col, param):
     Liste = []
     tmp = []
@@ -11,7 +8,10 @@ def parse_choix(data, col, param):
             tmp.append(ligne[param])
         else :
             variable = ligne[col]
+            print len(tmp)
             Liste.append(tmp)
             tmp = []
             tmp.append(ligne[param])
+    Liste.append(tmp)
+    print Liste
     return Liste

@@ -12,10 +12,12 @@ import base64
 import Pmw
 import time
 import ttk
-import Base
+import libnDat
 import Graphiques
 import Statistiques
-import Stock
+
+username = 'kjamart'
+pswd = base64.b64encode('')
 
 W_P = Tk()
 Pmw.initialise(W_P)
@@ -40,37 +42,37 @@ def Log(info):
     log.close()
 
 
-def Login():
+# def Login():
 
-    def Valid_Login(*w):
-        username = Entry_Nam_User.get()
-        pswd = base64.b64encode(Entry_Pswd.get())
-        if len(username) == 0:
-            showerror("Alerte", "Entrez vos identifiants")
-            Log("Login Error")
-        else:
-            Log("Login "+username)
-            Send_Dat((Rq.get("1.0", END)), username, pswd)
-            W_Login.destroy()
+#     def Valid_Login(*w):
+#         username = Entry_Nam_User.get()
+#         pswd = base64.b64encode(Entry_Pswd.get())
+#         if len(username) == 0:
+#             showerror("Alerte", "Entrez vos identifiants")
+#             Log("Login Error")
+#         else:
+#             Log("Login "+username)
+#             Send_Dat(), username, pswd)
+#             W_Login.destroy()
 
-    W_Login = Toplevel()
-    W_Login.title("Connexion")
+#     W_Login = Toplevel()
+#     W_Login.title("Connexion")
 
-    label_Nam_User = Label(W_Login, text='Username ')
-    label_Nam_User.grid(row=0, column=0)
-    Entry_Nam_User = Entry(W_Login, width=20)
-    Entry_Nam_User.grid(row=0, column=1)
+#     label_Nam_User = Label(W_Login, text='Username ')
+#     label_Nam_User.grid(row=0, column=0)
+#     Entry_Nam_User = Entry(W_Login, width=20)
+#     Entry_Nam_User.grid(row=0, column=1)
 
-    label_Pswd = Label(W_Login, text='Password ')
-    label_Pswd.grid(row=1, column=0)
-    Entry_Pswd = Entry(W_Login, width=20, show='*')
-    Entry_Pswd.grid(row=1, column=1)
+#     label_Pswd = Label(W_Login, text='Password ')
+#     label_Pswd.grid(row=1, column=0)
+#     Entry_Pswd = Entry(W_Login, width=20, show='*')
+#     Entry_Pswd.grid(row=1, column=1)
 
-    Entry_Pswd.bind("<Return>", Valid_Login)
+#     Entry_Pswd.bind("<Return>", Valid_Login)
 
-    Butt_Valid_Nam = Button(
-        W_Login, text='Ok', relief=GROOVE, command=Valid_Login)
-    Butt_Valid_Nam.grid(row=1, column=2)
+#     Butt_Valid_Nam = Button(
+#         W_Login, text='Ok', relief=GROOVE, command=Valid_Login)
+#     Butt_Valid_Nam.grid(row=1, column=2)
 
 
 def Click_Rq_Insert():
@@ -82,14 +84,15 @@ def Click_Rq_Insert():
 
 
 def Send_Dat(query, user, pwd):
-        data = Base.connexion(query, user, pwd)
-        Stock.serialize("data.pkl", data)
+        data = libnDat.connexion(query, user, pwd)
+        libnDat.serialize("data.pkl", data)
 
         if data:
             # Création d'une fenêtre tkinter
             W_Data = Toplevel()
             W_Data.title("Data")
             W_Data.geometry("550x200+50+50")
+
 
             Frame_Data = Frame(W_Data)
             Frame_Data.pack()
@@ -101,6 +104,11 @@ def Send_Dat(query, user, pwd):
             xsb.pack(side=BOTTOM, fill=X)
             ysb = ttk.Scrollbar(Frame_Data,orient=VERTICAL, command=Frame_Data.tree.yview)
             ysb.pack(side=RIGHT, fill=Y)
+
+            Frame_Data.tree.pack()
+            
+            Frame_Data.tree['yscroll'] = ysb.set
+            Frame_Data.tree['xscroll'] = xsb.set
 
             Frame_Data.tree.pack()
 
@@ -138,13 +146,12 @@ def Send_Dat(query, user, pwd):
 
 
 def Click_Rq_Valid():
-
     query = Rq.get("1.0", END)
     Rq.tag_add(SEL, "1.0", END)
     if len(query) == 1:
         Label_Error_Txt.set("Requête non-envoyée : Champs requête vide")
     else:
-        Login()
+        Send_Dat(query, username, pswd)
 
 
 def Seriz_Rq(Nam_Rq):
