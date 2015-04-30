@@ -35,14 +35,6 @@ db_Rq = anydbm.open('Requetes.dbm', 'c')
 def alert():
     showinfo("alerte", "Bravo!")
 
-
-def Log(info):
-    log = open("Log.txt", "a")
-    Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
-    log.write(Date + ' : ' + info+'\n')
-    log.close()
-
-
 # def Login():
 
 #     def Valid_Login(*w):
@@ -113,7 +105,7 @@ def Send_Dat(query, user, pwd):
 
             for item in data[0]:
                 Frame_Data.tree.insert('', 'end', values=item)
-            Log(("Query sent : "+query))
+            libnDat.Log(("Query sent : "+query))
 
             menubar = Menu(W_Data)
 
@@ -139,7 +131,7 @@ def Send_Dat(query, user, pwd):
 
         else:
             showerror("Alerte", "Impossible de se connecter à la base")
-            Log("Query NOT sent")
+            libnDat.Log("Query NOT sent")
 
 def Click_Rq_Insert():
     try:
@@ -167,7 +159,7 @@ def Seriz_Rq(Nam_Rq):
     else:
         db_Rq[Nam_Rq] = Rq.get("1.0", END).encode('utf8')
         Label_Error_Txt.set("Requête enregistrée...")
-        Log(("Query saved : \""+Nam_Rq+"\" : "+db_Rq[Nam_Rq]))
+        libnDat.Log(("Query saved : \""+Nam_Rq+"\" : "+db_Rq[Nam_Rq]))
 
 
 def Del_Rq():
