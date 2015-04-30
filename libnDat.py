@@ -7,6 +7,7 @@
 import pickle
 import psycopg2
 import base64
+import time
 from tkMessageBox import *
 
 def connexion(Req, username, pswd):
@@ -66,5 +67,3 @@ def Log(info):
     Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
     log.write(Date + ' : ' + info+'\n')
     log.close()
-
-

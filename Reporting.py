@@ -35,16 +35,18 @@ def Placement(filename, rajout, descript, TypeObj, tagg):
                         file.write(str(val) + " & ")
             file.write("\\hline\n \\end{tabular}\n" + descript + str(fin))
         
-# Dans le cas de l'insertion d'un graphique donc image.png
+# Dans le cas de l'insertion d'un graphique donc image.gif
     if TypeObj == 2 :
         with open(filename, 'r+') as file:
             text = file.read()
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
-            fin = text[i + len(tagg):]        
+            fin = text[i + len(tagg):]  
 
-        file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
-        file.write("\\end{figure}\n" + descript + "\n" + str(fin))
+            #file.      
+
+            file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
+            file.write("\\end{figure}\n" + descript + "\n" + str(fin))
 
 # Dans le cas de l'insertion des résultats d'un test statistique, donc chaine de caractère simple
     if TypeObj == 3 :
@@ -123,7 +125,7 @@ def Insert_Table():
     W_Title_Pdf(1, data)
 
 def Insert_Result():
-    W_Title_Pdf(2, data)
+    W_Title_Pdf(2, )
 
-def Insert_Image():
-    W_Title_Pdf(3, data)
+def Insert_Image(nb, image):
+    W_Title_Pdf(nb, image)
