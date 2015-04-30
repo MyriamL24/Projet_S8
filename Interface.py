@@ -17,7 +17,7 @@ import Graphiques
 import Statistiques
 import Reporting
 
-username = 'kjamart'
+username = 'mlopez001006'
 pswd = base64.b64encode('')
 
 W_P = Tk()
@@ -142,7 +142,7 @@ def Send_Dat(query, user, pwd):
 
             W_Data.config(menu=menubar)
 
-            Button(W_Data, text="Ajouter au PDF", command=Reporting.W_Title_Pdf(1, data)).pack(side = LEFT, fill = X)
+            Button(W_Data, text="Ajouter au PDF", command=Reporting.Insert_Table).pack(side = LEFT, fill = X)
 
         else:
             showerror("Alerte", "Impossible de se connecter à la base")

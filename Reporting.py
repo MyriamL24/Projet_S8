@@ -6,7 +6,9 @@ import Pmw
 import Evenement
 
 
-def Placement(filename, rajout, descript = '', TypeObj, tagg):
+def Placement(filename, rajout, descript, TypeObj, tagg):
+    print tagg, descript
+
     # Dans le cas de l'insertion des données : construction d'un tableau
     if TypeObj == 1 :
         data = rajout
@@ -31,7 +33,7 @@ def Placement(filename, rajout, descript = '', TypeObj, tagg):
                         file.write(str(val) +" \\\ \n")
                     else :
                         file.write(str(val) + " & ")
-            file.write("\\hline\n \\end{tabular}" + str(fin))
+            file.write("\\hline\n \\end{tabular}\n" + descript + str(fin))
         
 # Dans le cas de l'insertion d'un graphique donc image.png
     if TypeObj == 2 :
@@ -39,11 +41,10 @@ def Placement(filename, rajout, descript = '', TypeObj, tagg):
             text = file.read()
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
-            fin = text[i + len(tagg):]
-        
+            fin = text[i + len(tagg):]        
 
         file.write(deb + "\n \\begin{figure}[H] \n\\centering \n\\includegraphics[scale = 0.6]{rajout}\n")
-        file.write("\\end{figure}" + str(fin))
+        file.write("\\end{figure}\n" + descript + "\n" + str(fin))
 
 # Dans le cas de l'insertion des résultats d'un test statistique, donc chaine de caractère simple
     if TypeObj == 3 :
@@ -52,13 +53,13 @@ def Placement(filename, rajout, descript = '', TypeObj, tagg):
             i = text.index(tagg)
             deb = text[:i + len(tagg)]
             fin = text[i + len(tagg):]
-            file.write(deb + "\n" + rajout + str(fin))
+            file.write(deb + "\n" + rajout + "\n" + descript + "\n" +str(fin))
 
-def W_Title_Pdf(TypeObj, rajout):    
+def W_Title_Pdf(TypeObj, rajout):   
 
     def Get_Titles():
-            Section = str(Section_Pdf.get("1.0",END))
-            Descrip= str(Text_Section.get("1.0",END))
+            Section = str(Section_Pdf.get("1.0",END).encode('utf-8'))
+            Descrip= str(Text_Section.get("1.0",END).encode('utf-8'))
             Placement('file.tex', rajout, Descrip, TypeObj, Section)
             W_Entry.destroy()
 
@@ -75,10 +76,7 @@ def W_Title_Pdf(TypeObj, rajout):
             Nam_Title = Section_Pdf.get("1.0", END).encode('utf8')                        
             Seriz_Titles (Nam_Title)
             L_Titles.setlist(List_Title)
-            """if Nam_Title not in List_Title:
-                List_Title.append(Nam_Title)
-                L_Titles.setlist(List_Title)"""
-
+            
     W_Entry=Toplevel()
     List_Title=anydbm.open('sommairePDF.dbm', 'c')
 
@@ -108,3 +106,14 @@ def W_Title_Pdf(TypeObj, rajout):
                         label_text='Titres enregistrés',
                         listbox_height=5)
     L_Titles.pack()
+
+
+    def Insert_Table():
+        data = libnDat.deserialize("data.pkl")
+        W_Title_Pdf(1, data)
+
+    def Insert_Result():
+        W_Title_Pdf(2, data)
+
+    def Insert_Image():
+        W_Title_Pdf(3, data)
