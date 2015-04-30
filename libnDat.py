@@ -9,9 +9,6 @@ import psycopg2
 import base64
 from tkMessageBox import *
 
-
-
-
 def connexion(Req, username, pswd):
     try:
         conn = psycopg2.connect(dbname=username, host="dbserver", user=username, password=base64.b64decode(pswd))
@@ -63,5 +60,11 @@ def serialize(fich, data):
     output.close()
 
 
+
+def Log(info):
+    log = open("Log.txt", "a")
+    Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
+    log.write(Date + ' : ' + info+'\n')
+    log.close()
 
 

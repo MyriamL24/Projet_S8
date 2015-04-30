@@ -76,14 +76,6 @@ def Log(info):
 #     Butt_Valid_Nam.grid(row=1, column=2)
 
 
-def Click_Rq_Insert():
-    try:
-        Rq.delete("1.0", END)
-        Rq.insert(INSERT, db_Rq[List_Rq.getvalue()[0]])
-    except IndexError:
-        showerror("Alerte", "Aucune requête sélectionnée")
-
-
 def Send_Dat(query, user, pwd):
         data = libnDat.connexion(query, user, pwd)
         libnDat.serialize("data.pkl", data)
@@ -92,7 +84,7 @@ def Send_Dat(query, user, pwd):
             # Création d'une fenêtre tkinter
             W_Data = Toplevel()
             W_Data.title("Data")
-            W_Data.geometry("550x200+50+50")
+            W_Data.geometry("550x260+50+50")
 
 
             Frame_Data = Frame(W_Data)
@@ -135,18 +127,26 @@ def Send_Dat(query, user, pwd):
 
             menu2 = Menu(menubar, tearoff=0)
             menu2.add_command(label="Diagramme en bâtons", command=Graphiques.diagramme_baton)
-            menu2.add_command(label="Courbe", command=alert)
+            menu2.add_command(label="Courbe", command=Graphiques.courbes)
             menu2.add_command(label="Histogramme", command=alert)
             menu2.add_command(label="Boite a moustaches", command=alert)
+            menu2.add_command(label="DotPlot", command=Graphiques.Dot_Plot)
             menubar.add_cascade(label="Graphiques", menu=menu2)
 
             W_Data.config(menu=menubar)
 
-            Button(W_Data, text="Ajouter au PDF", command=Reporting.Insert_Table).pack(side = LEFT, fill = X)
+            Button(W_Data, text="Ajouter au PDF", command=Reporting.Insert_Table()).pack(side = LEFT, fill = X)
 
         else:
             showerror("Alerte", "Impossible de se connecter à la base")
             Log("Query NOT sent")
+
+def Click_Rq_Insert():
+    try:
+        Rq.delete("1.0", END)
+        Rq.insert(INSERT, db_Rq[List_Rq.getvalue()[0]])
+    except IndexError:
+        showerror("Alerte", "Aucune requête sélectionnée")
 
 
 def Click_Rq_Valid():
@@ -167,7 +167,7 @@ def Seriz_Rq(Nam_Rq):
     else:
         db_Rq[Nam_Rq] = Rq.get("1.0", END).encode('utf8')
         Label_Error_Txt.set("Requête enregistrée...")
-        Log(("Query saved : "+Nam_Rq+":"+db_Rq[Nam_Rq]))
+        Log(("Query saved : \""+Nam_Rq+"\" : "+db_Rq[Nam_Rq]))
 
 
 def Del_Rq():
@@ -241,9 +241,9 @@ menubar.add_cascade(label="Aide", menu=menu3)
 
 W_P.config(menu=menubar)
 
-Ico_Save2 = PhotoImage(file='./Images/Ico_Save2.gif')
-Ico_Check2 = PhotoImage(file='./Images/Ico_Check2.gif')
-Ico_Cross2 = PhotoImage(file='./Images/Ico_Cross2.gif')
+Ico_Save2 = PhotoImage(file='./Images/Icones/Ico_Save2.gif')
+Ico_Check2 = PhotoImage(file='./Images/Icones/Ico_Check2.gif')
+Ico_Cross2 = PhotoImage(file='./Images/Icones/Ico_Cross2.gif')
 
 # Frames Fenetre Principale (W_P)
 

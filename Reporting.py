@@ -3,7 +3,7 @@ from Tkinter import *
 from tkMessageBox import *
 import anydbm
 import Pmw
-import Evenement
+import libnDat
 
 
 def Placement(filename, rajout, descript, TypeObj, tagg):
@@ -22,7 +22,7 @@ def Placement(filename, rajout, descript, TypeObj, tagg):
                 file.write("c|")
             file.write("} \n\t\\hline \n")
             for i in data[1]:
-                if i == data[len(data)-1]:
+                if i == data[1][len(data)-1]:
                     file.write(str(i) +" \\\ \n")
                 else: 
                     file.write(str(i) + " & ")
@@ -59,6 +59,7 @@ def W_Title_Pdf(TypeObj, rajout):
 
     def Get_Titles():
             Section = str(Section_Pdf.get("1.0",END).encode('utf-8'))
+            print Section
             Descrip= str(Text_Section.get("1.0",END).encode('utf-8'))
             Placement('file.tex', rajout, Descrip, TypeObj, Section)
             W_Entry.destroy()
@@ -70,12 +71,20 @@ def W_Title_Pdf(TypeObj, rajout):
                 showerror("Alerte","Veuillez entrer un titre")                         
             else:
                 List_Title[Nam_Title] = Section_Pdf.get("1.0", END).encode('utf8')
-                Evenement.Log(("Titre enregistré :"+ Nam_Title+ ":" + List_Title[Nam_Title]))
+                libnDat.Log("Titre enregistré :"+ Nam_Title)
 
     def Get_Titles_Plus():     
             Nam_Title = Section_Pdf.get("1.0", END).encode('utf8')                        
             Seriz_Titles (Nam_Title)
             L_Titles.setlist(List_Title)
+
+    def Click_Title_Insert():
+        try:
+            Section_Pdf.delete("1.0", END)
+            Section_Pdf.insert(INSERT, List_Title[L_Titles.getvalue()[0]])
+        except IndexError:
+            showerror("Alerte", "Aucun emplacement sélectionné")
+
             
     W_Entry=Toplevel()
     List_Title=anydbm.open('sommairePDF.dbm', 'c')
@@ -89,7 +98,7 @@ def W_Title_Pdf(TypeObj, rajout):
 
     Text_Section=Text(Frame_Titles, heigh=6, width=70, font=("arial",9))
     Text_Section.pack(side=TOP,padx=1 )
-    Text_Section.insert(INSERT, "Entrez votre description")
+    #Text_Section.insert(INSERT, "Entrez votre description")
 
     Frame_Butt_Valid_Pdf= Frame(W_Entry) 
     Frame_Butt_Valid_Pdf.pack(side=BOTTOM)
@@ -104,16 +113,17 @@ def W_Title_Pdf(TypeObj, rajout):
                         items=List_Title,
                         labelpos='n',
                         label_text='Titres enregistrés',
-                        listbox_height=5)
+                        listbox_height=5,
+                        selectioncommand=Click_Title_Insert)
     L_Titles.pack()
 
 
-    def Insert_Table():
-        data = libnDat.deserialize("data.pkl")
-        W_Title_Pdf(1, data)
+def Insert_Table():
+    data = libnDat.deserialize("data.pkl")
+    W_Title_Pdf(1, data)
 
-    def Insert_Result():
-        W_Title_Pdf(2, data)
+def Insert_Result():
+    W_Title_Pdf(2, data)
 
-    def Insert_Image():
-        W_Title_Pdf(3, data)
+def Insert_Image():
+    W_Title_Pdf(3, data)
