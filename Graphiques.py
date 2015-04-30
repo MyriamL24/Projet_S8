@@ -41,11 +41,11 @@ def diagramme_baton():
         h.append(ligne[0])
     width = 0.8
     plt.bar(x, h, width, color='b')
-    plt.savefig('./Images/histogram.eps')
 
-    img = NewImage.open("histogram.eps")
-    img.save("./Images/figure.gif", "gif")
-    affichage_Image("./Images/figure.gif")
+    plt.savefig('./Images/Graphes/Diag.eps')
+    img = NewImage.open("./Images/Graphes/Diag.eps")
+    img.save("./Images/Graphes/Diag.gif", "gif")
+    affichage_Image("./Images/Graphes/Diag.gif")
 
 
 def courbes():
@@ -54,3 +54,25 @@ def courbes():
     y = []
     for ligne in data[0]:
          y.append(ligne[0])
+    plt.plot(x,y,color='r')
+
+    plt.savefig('./Images/Graphes/Courbe.eps')
+    img = NewImage.open("./Images/Graphes/Courbe.eps")
+    img.save("./Images/Graphes/Courbe.gif", "gif")
+    affichage_Image("./Images/Graphes/Courbe.gif")
+    img.close()
+
+
+def Dot_Plot():
+    data = libnDat.deserialize("data.pkl")
+    x = [_ for _ in range(len(data[0]))]
+    y = []
+    for ligne in data[0]:
+         y.append(ligne[0])
+    plt.scatter(x,y,color='r')  
+      
+    plt.savefig('./Images/Graphes/Dot.eps')
+    img = NewImage.open("./Images/Graphes/Dot.eps")
+    img.save("./Images/Graphes/Dot.gif", "gif")
+    affichage_Image("./Images/Graphes/Dot.gif")
+
