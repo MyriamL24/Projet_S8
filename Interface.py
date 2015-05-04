@@ -66,20 +66,37 @@ def alert():
 #         W_Login, text='Ok', relief=GROOVE, command=Valid_Login)
 #     Butt_Valid_Nam.grid(row=1, column=2)
 
+D = []
 
-def Send_Dat(query, user, pwd):
-        data = libnDat.connexion(query, user, pwd)
-        libnDat.serialize("data.pkl", data)
 
-        if data:
-            # Création d'une fenêtre tkinter
+def Send_Dat(query, user, pwd, D):
+
+    def Exit_Data_Display():
+        W_Data.destroy()
+        D[:] = []
+
+    data = libnDat.connexion(query, user, pwd)
+    libnDat.serialize("data.pkl", data)
+
+    Name_Tab_Data = 'Data ' + str(len(D))
+
+    if data:
+        if len(D) == 0:
+            global W_Data, Tab_Data
             W_Data = Toplevel()
             W_Data.title("Data")
-            W_Data.geometry("550x260+50+50")
+            W_Data.maxsize(width=550, height=-1)
 
+            D.append(Name_Tab_Data)
 
-            Frame_Data = Frame(W_Data)
-            Frame_Data.pack()
+            Tab_Data = Pmw.NoteBook(W_Data)
+            Tab_Data.pack(fill="both", expand=1, padx=10, pady=10)
+
+            Tab = Tab_Data.add(Name_Tab_Data)
+            Tab_Data.tab(Name_Tab_Data).focus_set()
+
+            Frame_Data = Frame(Tab)
+            Frame_Data.pack(fill=BOTH)
             Frame_Data.dataCols = data[1]
             Frame_Data.tree = ttk.Treeview(Frame_Data, columns=Frame_Data.dataCols, show='headings')
 
@@ -88,14 +105,10 @@ def Send_Dat(query, user, pwd):
             xsb.pack(side=BOTTOM, fill=X)
             ysb = ttk.Scrollbar(Frame_Data,orient=VERTICAL, command=Frame_Data.tree.yview)
             ysb.pack(side=RIGHT, fill=Y)
-
-            Frame_Data.tree.pack()
-            
+            Frame_Data.tree.pack(fill=BOTH, anchor=S)
             Frame_Data.tree['yscroll'] = ysb.set
             Frame_Data.tree['xscroll'] = xsb.set
-
-            Frame_Data.tree.pack()
-
+            Frame_Data.tree.pack(fill=BOTH,anchor=S)
             Frame_Data.tree['yscroll'] = ysb.set
             Frame_Data.tree['xscroll'] = xsb.set
 
@@ -104,7 +117,10 @@ def Send_Dat(query, user, pwd):
 
             for item in data[0]:
                 Frame_Data.tree.insert('', 'end', values=item)
+
             libnDat.Log(("Query sent : "+query))
+
+            Tab_Data.setnaturalsize()
 
             menubar = Menu(W_Data)
 
@@ -117,21 +133,55 @@ def Send_Dat(query, user, pwd):
             menubar.add_cascade(label="Statistiques", menu=menu1)
 
             menu2 = Menu(menubar, tearoff=0)
-            menu2.add_command(label="Diagramme en bâtons", command=Graphiques.diagramme_baton)
-            menu2.add_command(label="Courbe", command=Graphiques.courbes)
-            menu2.add_command(label="Histogramme", command=alert)
+            menu2.add_command(label="Diagramme en bâtons", command=Graphiques.Diagram_Stick)
+            menu2.add_command(label="Courbe", command=Graphiques.Curves)
             menu2.add_command(label="Boite a moustaches", command=Graphiques.Box_Plot)
             menu2.add_command(label="DotPlot", command=Graphiques.Dot_Plot)
+            menu2.add_command(label="Histogram", command=Graphiques.Histogram)
             menubar.add_cascade(label="Graphiques", menu=menu2)
 
             W_Data.config(menu=menubar)
 
+            Butt_Quit = Button(W_Data, text="Fermer", command=Exit_Data_Display)
+            Butt_Quit.pack(side=RIGHT)
             Butt_Pdf = Button(W_Data, text="Ajouter au PDF", command=Reporting.Insert_Table)
-            Butt_Pdf.pack(side = LEFT, fill = X)
+            Butt_Pdf.pack(side=RIGHT)
 
         else:
-            showerror("Alerte", "Impossible de se connecter à la base")
-            libnDat.Log("Query NOT sent")
+            Tab = Tab_Data.add(Name_Tab_Data)
+            Tab_Data.tab(Name_Tab_Data).focus_set()
+
+            D.append(Name_Tab_Data)
+
+            Frame_Data = Frame(Tab)
+            Frame_Data.pack()
+            Frame_Data.dataCols = data[1]
+            Frame_Data.tree = ttk.Treeview(Frame_Data, columns=Frame_Data.dataCols, show='headings')
+
+            #Scrollbars
+            xsb = ttk.Scrollbar(Frame_Data,orient=HORIZONTAL, command=Frame_Data.tree.xview)
+            xsb.pack(side=BOTTOM, fill=X)
+            ysb = ttk.Scrollbar(Frame_Data,orient=VERTICAL, command=Frame_Data.tree.yview)
+            ysb.pack(side=RIGHT, fill=Y)
+            Frame_Data.tree.pack()
+            Frame_Data.tree['yscroll'] = ysb.set
+            Frame_Data.tree['xscroll'] = xsb.set
+            Frame_Data.tree.pack()
+            Frame_Data.tree['yscroll'] = ysb.set
+            Frame_Data.tree['xscroll'] = xsb.set
+
+            for c in Frame_Data.dataCols:
+                Frame_Data.tree.heading(c, text=c.title())
+
+            for item in data[0]:
+                Frame_Data.tree.insert('', 'end', values=item)
+            libnDat.Log(("Query sent : "+query))
+
+            Tab_Data.setnaturalsize()
+
+    else:
+        showerror("Alerte", "Impossible de se connecter à la base")
+        libnDat.Log("Query NOT sent")
 
 def Click_Rq_Insert():
     try:
@@ -147,7 +197,7 @@ def Click_Rq_Valid():
     if len(query) == 1:
         Label_Error_Txt.set("Requête non-envoyée : Champs requête vide")
     else:
-        Send_Dat(query, username, pswd)
+        Send_Dat(query, username, pswd,D)
 
 
 def Seriz_Rq(Nam_Rq):

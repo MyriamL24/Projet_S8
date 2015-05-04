@@ -127,5 +127,5 @@ def Insert_Table():
 def Insert_Result():
     W_Title_Pdf(2, )
 
-def Insert_Image(nb, image):
-    W_Title_Pdf(nb, image)
+def Insert_Image():
+    W_Title_Pdf(3,'')
