@@ -5,73 +5,168 @@
 
 from Tkinter import *
 from scipy.stats import *
-import libnDat
 from tkMessageBox import *
+import libnDat
+import Reporting
+import Pmw
 
-def Shapiro():    
-    data = libnDat.deserialize("data.pkl")    
-    res =  shapiro(data[0])
-    if res[1] >= 0.05:
-        result = " Test de Shapiro \n\nLa population suit une loi normale\n W : "+str(res[0])+"\n p.value : "+str(res[1])
-    else :
-        result = "Test de Shapiro \n\nLa population ne suit pas une loi normale\n W : "+str(res[0])+"\n p.value : "+str(res[1])
-    W_Result = Toplevel()
-    txt=Text(W_Result,width=50,height=5)
-    txt.pack()
-    txt.insert(END,result)    
-    Button(W_Result, text="Ajouter au PDF", command=alert).pack(side = LEFT, fill = X)
-    Button(W_Result, text="Quitter", command = W_Result.destroy).pack(side = RIGHT, fill = X)
+List_Tab_Results = []
 
-def Wilcoxon():
-    data =  libnDat.deserialize("data.pkl")
-    liste = libnDat.parse_choix(data,1,0)  
-    res = wilcoxon(liste[0], liste[1])
-    result = " Test des rangs signés de Wilcoxon \n\n T : "+str(res[0])+"\n p.value : "+str(res[1])    
-    W_Result = Toplevel()
-    txt=Text(W_Result,width=50,height=5)
-    txt.pack()
-    txt.insert(END,result)    
-    Button(W_Result, text="Ajouter au PDF", command=alert).pack(side = LEFT, fill = X)
-    Button(W_Result, text="Quitter", command = W_Result.destroy).pack(side = RIGHT, fill = X)
 
-def Student() :
-    data =  libnDat.deserialize("data.pkl")
-    liste = libnDat.parse_choix(data,1,0)
+# Displaying results in a lovely new window
+def Display_results(result):
+
+    def Exit_Results_Display():
+        Tab_Results.delete(Pmw.SELECT)
+        if Tab_Results.index(Pmw.END, forInsert=True) == 0:
+            W_Results.destroy()
+            List_Tab_Results[:] = []
+
+    Name_Tab_Results = 'Results '+str(len(List_Tab_Results))
+    if len(List_Tab_Results) == 0:
+        global W_Results, Tab_Results
+
+        # Creation of the new window
+        W_Results = Toplevel()
+        W_Results.title("Results")
+
+        # Update the number of the Tab in the List_Tab_Name list
+        List_Tab_Results.append(Name_Tab_Results)
+
+        Tab_Results = Pmw.NoteBook(W_Results)
+        Tab_Results.pack(fill="both", expand=1, padx=10, pady=10)
+
+        # First Tab of the new window
+        Tab = Tab_Results.add(Name_Tab_Results)
+        Tab_Results.tab(Name_Tab_Results).focus_set()
+
+        Title_Results = Pmw.Group(Tab, tag_text='Results')
+        Title_Results.pack(fill='both', expand=1, padx=6, pady=6)
+
+        Label_Results = Label(
+            Title_Results.interior(), text=result)
+        Label_Results.pack(padx=2, pady=2, expand='yes', fill='both')
+
+        Butt_Results_PDF = Button(
+            W_Results, text="Ajouter au PDF", command=lambda: Reporting.Insert_PDF(2))
+        Butt_Results_PDF.pack(side=LEFT, fill=X)
+
+        Butt_Results_Exit = Button(
+            W_Results, text="Fermer", command=Exit_Results_Display)
+        Butt_Results_Exit.pack(side=RIGHT, fill=X)
+
+        Tab_Results.setnaturalsize()
+
+    else:
+
+        # Update the number of the Tab in the List_Tab_Name list
+        List_Tab_Results.append(Name_Tab_Results)
+
+        # First Tab of the new window
+        Tab = Tab_Results.add(Name_Tab_Results)
+        Tab_Results.selectpage(Name_Tab_Results)
+
+        Title_Results = Pmw.Group(Tab, tag_text='Results')
+        Title_Results.pack(fill='both', expand=1, padx=6, pady=6)
+
+        Label_Results = Label(
+            Title_Results.interior(), text=result)
+        Label_Results.pack(padx=2, pady=2, expand='yes', fill='both')
+
+        Tab_Results.setnaturalsize()
+
+
+# Shapiro's test using scipy module
+def Shapiro(ref):
+
+    data = libnDat.deserialize(ref)
+    try:
+        res = shapiro(data[0])
+        # Formating results
+        if res[1] >= 0.05:
+            result = " Test de Shapiro \n\nLa population suit une loi normale\n W : " + \
+                str(res[0]) + "\n p.value : " + str(res[1]) + '\n'
+        else:
+            result = "Test de Shapiro \n\nLa population ne suit pas une loi normale\n W : " + \
+                str(res[0]) + "\n p.value : " + str(res[1]) + '\n'
+    except ValueError:
+        showerror("Alerte",
+            "Test Shapiro impossible :\n\n" \
+            "Shapiro, test de normalité d'un echantillon")
+        return
+
+    Display_results(result)
+
+
+# Wilcoxon's test using scipy module IndexError
+def Wilcoxon(ref):
+
+    data = libnDat.deserialize(ref)
+
+    # Ordering datas
+    try:
+        liste = libnDat.parse_choix(data, 1, 0)
+    except IndexError:
+        showerror("Alerte",
+            "Test Wilcoxon impossible :\n\n" \
+            "Mauvaise selection de données")
+        return
+
+    # Test and formating the results
+    try:
+        res = wilcoxon(liste[0], liste[1])
+        result = " Test des rangs signés de Wilcoxon \n\n T : " + \
+            str(res[0]) + "\n p.value : " + str(res[1])
+    except TypeError:
+        showerror("Alerte",
+            "Test Wilcoxon impossible :\n\n" \
+            "Mauvaise selection de données")
+        return        
+
+    Display_results(result)
+
+
+# Students's test using scipy module
+def Student(ref):
+
+    data = libnDat.deserialize(ref)
+
+    # Ordering datas
+    liste = libnDat.parse_choix(data, 1, 0)
+
+    # Test and formating the results
     res = ttest_ind(liste[0], liste[1])
-    result = " Test de student \n\n T : "+str(res[0])+"\n p.value : "+str(res[1])
-    W_Result = Toplevel()
-    txt=Text(W_Result,width=50,height=5)
-    txt.pack()
-    txt.insert(END,result)    
-    Button(W_Result, text="Ajouter au PDF", command=alert).pack(side = LEFT, fill = X)
-    Button(W_Result, text="Quitter", command = W_Result.destroy).pack(side = RIGHT, fill = X)
+    result = " Test de student \n\n T : " + \
+        str(res[0]) + "\n p.value : " + str(res[1])
+
+    Display_results(result)
 
 
-def Kruskall_wallis():
-    data = libnDat.deserialize("data.pkl")
-    donnees = libnDat.parse_choix(data,len(data[1])-1,len(data[1])-2)
+# Kruskall_Wallis's test using scipy module
+def Kruskall_wallis(ref):
+
+    data = libnDat.deserialize(ref)
+
+    # Ordering datas
+    donnees = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
+
+    # Test and formating the results
     res = mstats.kruskalwallis(*donnees)
-    result = "Test de Kruskall-Wallis \n\n W : "+str(res[0])+"\n p.value : "+str(res[1])
-    W_Result = Toplevel()
-    txt = Text(W_Result,width=50,height=5)
-    txt.pack()
-    txt.insert(END,result)    
-    Button(W_Result, text="Ajouter au PDF", command=alert).pack(side = LEFT, fill = X)
-    Button(W_Result, text="Quitter", command = W_Result.destroy).pack(side = RIGHT, fill = X)
+    result = "Test de Kruskall-Wallis \n\n W : " + \
+        str(res[0]) + "\n p.value : " + str(res[1])
 
-def Pearson():
-    data = libnDat.deserialize("data.pkl")
-    liste = libnDat.parse_choix(data,1,0)
-    res = pearsonr(liste[0],liste[1])
-    W_Result = Toplevel()
-    txt=Text(W_Result,width=50,height=5)
-    txt.pack()
-    txt.insert(END,result)    
-    Button(W_Result, text="Ajouter au PDF", command=alert).pack(side = LEFT, fill = X)
-    Button(W_Result, text="Quitter", command = W_Result.destroy).pack(side = RIGHT, fill = X)
+    Display_results(result)
 
 
-def alert():
-    showinfo("Alerte", "Coucou!")
-    
-#Kruskall_wallis()
+# Pearson's test using scipy module
+def Pearson(ref):
+
+    data = libnDat.deserialize(ref)
+
+    # Ordering datas
+    liste = libnDat.parse_choix(data, 1, 0)
+
+    # Test and formating the results
+    result = pearsonr(liste[0], liste[1])
+
+    Display_results(result)

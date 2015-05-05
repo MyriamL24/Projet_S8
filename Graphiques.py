@@ -10,24 +10,37 @@ import libnDat
 import Reporting
 import Pmw
 
-L = []
+List_Images = []
 
 
 def alert():
     showinfo("alerte", "Bravo!")
 
 
+# Function to display images
+
 def Display_Image(fichier, L):
 
+    # Part for the exit button
+
     def Exit_Graph_Display():
-        W_Image.destroy()
-        L[:] = []
+        Tab_Graph.delete(Pmw.SELECT)
+        if Tab_Graph.index(Pmw.END, forInsert=True) == 0:
+            W_Image.destroy()
+            L[:] = []
 
     Name_Tab_Graph = 'Fig. ' + str(len(L))
 
+    # Based on the Lenght of the List_Images (contains ref. to the images),
+    # Open a new window (Toplevel) or a new Tab
+
     if len(L) == 0:
+
+        # Opens New window
+
         global W_Image, Tab_Graph
         W_Image = Toplevel()
+
         Tab_Graph = Pmw.NoteBook(W_Image)
         Tab_Graph.pack(fill="both", expand=1, padx=10, pady=10)
 
@@ -44,13 +57,17 @@ def Display_Image(fichier, L):
 
         Butt_Quit = Button(W_Image, text="Fermer", command=Exit_Graph_Display)
         Butt_Quit.pack(side=RIGHT)
-        Butt_Pdf = Button(W_Image, text="Ajouter au PDF", command=Reporting.Insert_Image)
+        Butt_Pdf = Button(
+            W_Image, text="Ajouter au PDF",
+            command=lambda: Reporting.Insert_PDF(3))
         Butt_Pdf.pack(side=RIGHT)
 
     else:
 
+        # Opens New Tab
+
         Graph = Tab_Graph.add(Name_Tab_Graph)
-        Tab_Graph.tab(Name_Tab_Graph).focus_set()
+        Tab_Graph.selectpage(Name_Tab_Graph)
 
         Display = Canvas(Graph, width="600", height="500")
         L.append(PhotoImage(file=fichier))
@@ -60,8 +77,11 @@ def Display_Image(fichier, L):
 
         Tab_Graph.setnaturalsize()
 
-def Diagram_Stick():
-    data = libnDat.deserialize("data.pkl")
+
+def Diagram_Stick(ref):
+
+    data = libnDat.deserialize(ref)
+
     h = []
     x = [_ for _ in range(len(data[0]))]
     for ligne in data[0]:
@@ -69,70 +89,93 @@ def Diagram_Stick():
     width = 0.8
     plt.bar(x, h, width, color='b')
 
-    plt.savefig('./Images/Graphes/Diag.eps')
+    plt.savefig("./Images/Graphes/Diag" + str(len(List_Images)) + ".eps")
     plt.clf()
-    img = NewImage.open("./Images/Graphes/Diag.eps")
-    img.save("./Images/Graphes/Diag.gif", "gif")
-    Display_Image("./Images/Graphes/Diag.gif", L)
+    img = NewImage.open(
+        "./Images/Graphes/Diag" + str(len(List_Images)) + ".eps")
+    img.save("./Images/Graphes/Diag" + str(len(List_Images)) + ".gif", "gif")
+
+    Display_Image(
+        "./Images/Graphes/Diag" + str(len(List_Images)) + ".gif", List_Images)
     libnDat.Log("Diagram Stick")
 
 
-def Curves():
-    data = libnDat.deserialize("data.pkl")
+def Curves(ref):
+
+    data = libnDat.deserialize(ref)
+
     x = [_ for _ in range(len(data[0]))]
     y = []
     for ligne in data[0]:
         y.append(ligne[0])
     plt.plot(x, y, color='r')
 
-    plt.savefig('./Images/Graphes/Courbe.eps')
+    plt.savefig("./Images/Graphes/Courbe" + str(len(List_Images)) + ".eps")
     plt.clf()
-    img = NewImage.open("./Images/Graphes/Courbe.eps")
-    img.save("./Images/Graphes/Courbe.gif", "gif")
-    Display_Image("./Images/Graphes/Courbe.gif", L)
+    img = NewImage.open(
+        "./Images/Graphes/Courbe" + str(len(List_Images)) + ".eps")
+    img.save("./Images/Graphes/Courbe" + str(len(List_Images)) + ".gif", "gif")
+
+    Display_Image(
+        "./Images/Graphes/Courbe" + str(len(List_Images))
+        + ".gif", List_Images)
     libnDat.Log("Diagram Curves")
 
 
-def Dot_Plot():
-    data = libnDat.deserialize("data.pkl")
+def Dot_Plot(ref):
+
+    data = libnDat.deserialize(ref)
+
     x = [_ for _ in range(len(data[0]))]
     y = []
     for ligne in data[0]:
         y.append(ligne[0])
     plt.scatter(x, y, color='r')
 
-    plt.savefig('./Images/Graphes/Dot.eps')
+    plt.savefig("./Images/Graphes/Dot" + str(len(List_Images)) + ".eps")
     plt.clf()
-    img = NewImage.open("./Images/Graphes/Dot.eps")
-    img.save("./Images/Graphes/Dot.gif", "gif")
-    Display_Image("./Images/Graphes/Dot.gif", L)
+    img = NewImage.open(
+        "./Images/Graphes/Dot" + str(len(List_Images)) + ".eps")
+    img.save("./Images/Graphes/Dot" + str(len(List_Images)) + ".gif", "gif")
+
+    Display_Image(
+        "./Images/Graphes/Dot" + str(len(List_Images)) + ".gif", List_Images)
     libnDat.Log("Dot Plot")
 
 
-def Box_Plot():
-    data = libnDat.deserialize("data.pkl")
-    donnee = libnDat.parse_choix(data, len(data[1])-1, len(data[1])-2)
+def Box_Plot(ref):
+
+    data = libnDat.deserialize(ref)
+
+    donnee = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
     plt.boxplot(donnee)
 
-    plt.savefig('./Images/Graphes/Box.eps')
+    plt.savefig("./Images/Graphes/Box" + str(len(List_Images)) + ".eps")
     plt.clf()
-    img = NewImage.open("./Images/Graphes/Box.eps")
-    img.save("./Images/Graphes/Box.gif", "gif")
-    Display_Image("./Images/Graphes/Box.gif", L)
+    img = NewImage.open(
+        "./Images/Graphes/Box" + str(len(List_Images)) + ".eps")
+    img.save("./Images/Graphes/Box" + str(len(List_Images)) + ".gif", "gif")
+
+    Display_Image(
+        "./Images/Graphes/Box" + str(len(List_Images)) + ".gif", List_Images)
     libnDat.Log("Box Plot")
 
 
-def histogramme():
-    data = libnDat.deserialize("data.pkl")
+def Histogram(ref):
+
+    data = libnDat.deserialize(ref)
 
     y = []
     for ligne in data[0]:
-         y.append(ligne[0])
+        y.append(ligne[0])
     plt.hist(y)
-    
-    plt.savefig('./Images/Graphes/Box.eps')
+
+    plt.savefig("./Images/Graphes/Histo" + str(len(List_Images)) + ".eps")
     plt.clf()
-    img = NewImage.open("./Images/Graphes/Box.eps")
-    img.save("./Images/Graphes/Box.gif", "gif")
-    Display_Image("./Images/Graphes/Box")
+    img = NewImage.open(
+        "./Images/Graphes/Histo" + str(len(List_Images)) + ".eps")
+    img.save("./Images/Graphes/Histo" + str(len(List_Images)) + ".gif", "gif")
+
+    Display_Image(
+        "./Images/Graphes/Histo" + str(len(List_Images)) + ".gif", List_Images)
     libnDat.Log("Box Plot")

@@ -10,29 +10,42 @@ import base64
 import time
 from tkMessageBox import *
 
+
+# Connexion to database
 def connexion(Req, username, pswd):
     try:
-        conn = psycopg2.connect(dbname=username, host="dbserver", user=username, password=base64.b64decode(pswd))
+        conn = psycopg2.connect(
+            dbname=username, host="dbserver",
+            user=username, password=base64.b64decode(pswd))
         cur = conn.cursor()
     except Exception:
-            print "Impossible de se connecter à la base de données"
-            return
+        showerror('Alert',"Impossible de se connecter à la base de données")
+        return
     try:
-            cur.execute(Req)
-            column_name = [desc[0] for desc in cur.description]
+        cur.execute(Req)
+        column_name = [desc[0] for desc in cur.description]
     except:
-            print "Impossible d'executer la requête"
+        showerror('Alerte',"Impossible d'executer la requête")
+        return
     try:
         data = cur.fetchall()
     except Exception:
         showerror("Alerte", "Aucun résultats")
-        pass
+        return
     conn.close()
     cur.close()
 
     return data, column_name
 
 
+# Allows to save in a pickle flat file
+def serialize(fich, data):
+    output = open(fich, 'w')
+    pickle.dump(data, output)
+    output.close()
+
+
+# Used to order datas to perform stats on
 def parse_choix(data, col, param):
     Liste = []
     tmp = []
@@ -48,6 +61,7 @@ def parse_choix(data, col, param):
     return Liste
 
 
+# Allows to read serialized files
 def deserialize(fich):
     pkl_file = open(fich, 'r')
     requetes = pickle.load(pkl_file)
@@ -55,15 +69,9 @@ def deserialize(fich):
     return requetes
 
 
-def serialize(fich, data):
-    output = open(fich, 'w')
-    pickle.dump(data, output)
-    output.close()
-
-
-
+# Permits to get the follow-up of operations
 def Log(info):
-    log = open("Log.txt", "a")
+    log = open("Logndat.txt", "a")
     Date = time.strftime('%d/%m/%y %H:%M', time.localtime())
-    log.write(Date + ' : ' + info+'\n')
+    log.write(Date + ' : ' + info + '\n')
     log.close()
