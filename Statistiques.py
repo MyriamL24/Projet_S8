@@ -6,11 +6,13 @@
 from Tkinter import *
 from scipy.stats import *
 from tkMessageBox import *
+import anydbm
 import libnDat
 import Reporting
 import Pmw
 
 List_Tab_Results = []
+Stock = anydbm.open('Stock.dbm', 'c')
 
 
 # Displaying results in a lovely new window
@@ -22,7 +24,10 @@ def Display_results(result):
             W_Results.destroy()
             List_Tab_Results[:] = []
 
-    Name_Tab_Results = 'Results '+str(len(List_Tab_Results))
+    Name_Tab_Results = 'Results ' + str(len(List_Tab_Results))
+
+    Stock[Name_Tab_Results] = result
+
     if len(List_Tab_Results) == 0:
         global W_Results, Tab_Results
 
@@ -48,7 +53,7 @@ def Display_results(result):
         Label_Results.pack(padx=2, pady=2, expand='yes', fill='both')
 
         Butt_Results_PDF = Button(
-            W_Results, text="Ajouter au PDF", command=lambda: Reporting.Insert_PDF(2))
+            W_Results, text="Ajouter au PDF", command=lambda: Reporting.Insert_PDF(3, Stock[str(Tab_Results.getcurselection())]))
         Butt_Results_PDF.pack(side=LEFT, fill=X)
 
         Butt_Results_Exit = Button(
@@ -80,6 +85,7 @@ def Display_results(result):
 def Shapiro(ref):
 
     data = libnDat.deserialize(ref)
+
     try:
         res = shapiro(data[0])
         # Formating results
@@ -121,7 +127,7 @@ def Wilcoxon(ref):
         showerror("Alerte",
             "Test Wilcoxon impossible :\n\n" \
             "Mauvaise selection de données")
-        return        
+        return
 
     Display_results(result)
 
@@ -132,12 +138,25 @@ def Student(ref):
     data = libnDat.deserialize(ref)
 
     # Ordering datas
-    liste = libnDat.parse_choix(data, 1, 0)
+    try:
+        liste = libnDat.parse_choix(data, 1, 0)
+    except Exception:
+        showerror("Alerte",
+            "Test Student impossible :\n\n" \
+            "Mauvaise selection de données")
+        return
+
 
     # Test and formating the results
-    res = ttest_ind(liste[0], liste[1])
-    result = " Test de student \n\n T : " + \
-        str(res[0]) + "\n p.value : " + str(res[1])
+    try:
+        res = ttest_ind(liste[0], liste[1])
+        result = " Test de student \n\n T : " + \
+            str(res[0]) + "\n p.value : " + str(res[1])
+    except Exception:
+        showerror("Alerte",
+            "Test Student impossible :\n\n" \
+            "Mauvaise selection de données")
+        return
 
     Display_results(result)
 
@@ -148,12 +167,22 @@ def Kruskall_wallis(ref):
     data = libnDat.deserialize(ref)
 
     # Ordering datas
-    donnees = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
+    try:
+        donnees = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
+    except Exception:
+        showerror("Alerte",
+            "Test Kruskall-Wallis impossible :\n\n" \
+            "Mauvaise selection de données")
 
     # Test and formating the results
-    res = mstats.kruskalwallis(*donnees)
-    result = "Test de Kruskall-Wallis \n\n W : " + \
-        str(res[0]) + "\n p.value : " + str(res[1])
+    try:
+        res = mstats.kruskalwallis(*donnees)
+        result = "Test de Kruskall-Wallis \n\n W : " + \
+            str(res[0]) + "\n p.value : " + str(res[1])
+    except Exception:
+        showerror("Alerte",
+            "Test Kruskall-Wallis impossible :\n\n" \
+            "Mauvaise selection de données")
 
     Display_results(result)
 
@@ -164,9 +193,19 @@ def Pearson(ref):
     data = libnDat.deserialize(ref)
 
     # Ordering datas
-    liste = libnDat.parse_choix(data, 1, 0)
+    try:
+        liste = libnDat.parse_choix(data, 1, 0)
+    except Exception:
+        showerror("Alerte",
+            "Test Pearson impossible :\n\n" \
+            "Mauvaise selection de données")
 
     # Test and formating the results
-    result = pearsonr(liste[0], liste[1])
+    try:
+        result = pearsonr(liste[0], liste[1])
+    except Exception:
+        showerror("Alerte",
+            "Test Pearson impossible :\n\n" \
+            "Mauvaise selection de données")
 
     Display_results(result)

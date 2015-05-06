@@ -9,17 +9,19 @@ from Tkinter import *
 import libnDat
 import Reporting
 import Pmw
+import anydbm
 
 List_Images = []
+Stock = anydbm.open('Stock.dbm', 'c')
 
 
 def alert():
     showinfo("alerte", "Bravo!")
 
 
-# Function to display images
+# Fuction to display images
 
-def Display_Image(fichier, L):
+def Display_Image(fichier):
 
     # Part for the exit button
 
@@ -27,14 +29,17 @@ def Display_Image(fichier, L):
         Tab_Graph.delete(Pmw.SELECT)
         if Tab_Graph.index(Pmw.END, forInsert=True) == 0:
             W_Image.destroy()
-            L[:] = []
+            List_Images[:] = []
 
-    Name_Tab_Graph = 'Fig. ' + str(len(L))
+    Name_Tab_Graph = 'Fig. ' + str(len(List_Images))
+
+    Stock[Name_Tab_Graph] = fichier
+
 
     # Based on the Lenght of the List_Images (contains ref. to the images),
     # Open a new window (Toplevel) or a new Tab
 
-    if len(L) == 0:
+    if len(List_Images) == 0:
 
         # Opens New window
 
@@ -48,9 +53,9 @@ def Display_Image(fichier, L):
         Tab_Graph.tab(Name_Tab_Graph).focus_set()
 
         Display = Canvas(Graph, width="600", height="500")
-        L.append(PhotoImage(file=fichier))
-        Display.create_image(300, 250, image=L[-1])
-        Display.image = L[-1]
+        List_Images.append(PhotoImage(file=fichier))
+        Display.create_image(300, 250, image=List_Images[-1])
+        Display.image = List_Images[-1]
         Display.pack()
 
         Tab_Graph.setnaturalsize()
@@ -59,7 +64,7 @@ def Display_Image(fichier, L):
         Butt_Quit.pack(side=RIGHT)
         Butt_Pdf = Button(
             W_Image, text="Ajouter au PDF",
-            command=lambda: Reporting.Insert_PDF(3))
+            command=lambda: Reporting.Insert_PDF(2, Stock[str(Tab_Graph.getcurselection())]))
         Butt_Pdf.pack(side=RIGHT)
 
     else:
@@ -70,9 +75,9 @@ def Display_Image(fichier, L):
         Tab_Graph.selectpage(Name_Tab_Graph)
 
         Display = Canvas(Graph, width="600", height="500")
-        L.append(PhotoImage(file=fichier))
-        Display.create_image(300, 250, image=L[-1])
-        Display.image = L[-1]
+        List_Images.append(PhotoImage(file=fichier))
+        Display.create_image(300, 250, image=List_Images[-1])
+        Display.image = List_Images[-1]
         Display.pack()
 
         Tab_Graph.setnaturalsize()
@@ -89,14 +94,15 @@ def Diagram_Stick(ref):
     width = 0.8
     plt.bar(x, h, width, color='b')
 
-    plt.savefig("./Images/Graphes/Diag" + str(len(List_Images)) + ".eps")
-    plt.clf()
-    img = NewImage.open(
-        "./Images/Graphes/Diag" + str(len(List_Images)) + ".eps")
-    img.save("./Images/Graphes/Diag" + str(len(List_Images)) + ".gif", "gif")
+    Name_Diag = "./Images/Graphes/Diag_" + str(len(List_Images))
 
-    Display_Image(
-        "./Images/Graphes/Diag" + str(len(List_Images)) + ".gif", List_Images)
+    plt.savefig(Name_Diag + ".eps")
+    plt.clf()
+
+    img = NewImage.open(Name_Diag + ".eps")
+    img.save(Name_Diag + ".gif", "gif")
+
+    Display_Image((str(Name_Diag) + ".gif"))
     libnDat.Log("Diagram Stick")
 
 
@@ -110,15 +116,15 @@ def Curves(ref):
         y.append(ligne[0])
     plt.plot(x, y, color='r')
 
-    plt.savefig("./Images/Graphes/Courbe" + str(len(List_Images)) + ".eps")
-    plt.clf()
-    img = NewImage.open(
-        "./Images/Graphes/Courbe" + str(len(List_Images)) + ".eps")
-    img.save("./Images/Graphes/Courbe" + str(len(List_Images)) + ".gif", "gif")
+    Name_Curves = "./Images/Graphes/Courbe_" + str(len(List_Images))
 
-    Display_Image(
-        "./Images/Graphes/Courbe" + str(len(List_Images))
-        + ".gif", List_Images)
+    plt.savefig(Name_Curves + ".eps")
+    plt.clf()
+    img = NewImage.open(Name_Curves + ".eps")
+
+    img.save(Name_Curves + ".gif", "gif")
+
+    Display_Image((str(Name_Curves) + ".gif"))
     libnDat.Log("Diagram Curves")
 
 
@@ -132,15 +138,15 @@ def Dot_Plot(ref):
         y.append(ligne[0])
     plt.scatter(x, y, color='r')
 
-    plt.savefig("./Images/Graphes/Dot" + str(len(List_Images)) + ".eps")
-    plt.clf()
-    img = NewImage.open(
-        "./Images/Graphes/Dot" + str(len(List_Images)) + ".eps")
-    img.save("./Images/Graphes/Dot" + str(len(List_Images)) + ".gif", "gif")
+    Name_Dot_Plot = "./Images/Graphes/Dot_" + str(len(List_Images))
 
-    Display_Image(
-        "./Images/Graphes/Dot" + str(len(List_Images)) + ".gif", List_Images)
-    libnDat.Log("Dot Plot")
+    plt.savefig(Name_Dot_Plot + ".eps")
+    plt.clf()
+
+    img = NewImage.open(Name_Dot_Plot + ".eps")
+    img.save(Name_Dot_Plot + ".gif", "gif")
+
+    Display_Image((str(Name_Dot_Plot) + ".gif"))
 
 
 def Box_Plot(ref):
@@ -150,14 +156,14 @@ def Box_Plot(ref):
     donnee = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
     plt.boxplot(donnee)
 
-    plt.savefig("./Images/Graphes/Box" + str(len(List_Images)) + ".eps")
-    plt.clf()
-    img = NewImage.open(
-        "./Images/Graphes/Box" + str(len(List_Images)) + ".eps")
-    img.save("./Images/Graphes/Box" + str(len(List_Images)) + ".gif", "gif")
+    Name_Box_Plot = "./Images/Graphes/Box_" + str(len(List_Images))
 
-    Display_Image(
-        "./Images/Graphes/Box" + str(len(List_Images)) + ".gif", List_Images)
+    plt.savefig(Name_Box_Plot + ".eps")
+    plt.clf()
+    img = NewImage.open(Name_Box_Plot + ".eps")
+    img.save(Name_Box_Plot + ".gif", "gif")
+
+    Display_Image((str(Name_Box_Plot) + ".gif"))
     libnDat.Log("Box Plot")
 
 
@@ -170,12 +176,12 @@ def Histogram(ref):
         y.append(ligne[0])
     plt.hist(y)
 
-    plt.savefig("./Images/Graphes/Histo" + str(len(List_Images)) + ".eps")
-    plt.clf()
-    img = NewImage.open(
-        "./Images/Graphes/Histo" + str(len(List_Images)) + ".eps")
-    img.save("./Images/Graphes/Histo" + str(len(List_Images)) + ".gif", "gif")
+    Name_Histo = "./Images/Graphes/Histo_" + str(len(List_Images)) 
 
-    Display_Image(
-        "./Images/Graphes/Histo" + str(len(List_Images)) + ".gif", List_Images)
+    plt.savefig(Name_Histo + ".eps")
+    plt.clf()
+    img = NewImage.open(Name_Histo + ".eps")
+    img.save(Name_Histo + ".gif", "gif")
+
+    Display_Image((str(Name_Histo) + ".gif"))
     libnDat.Log("Box Plot")

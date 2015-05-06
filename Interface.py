@@ -20,6 +20,12 @@ import os
 username = 'mlopez001006'
 pswd = base64.b64encode('')
 
+# Clearing previous tmp files such as Graphs
+files = os.listdir('./Images/Graphes/')
+for i in range(0, len(files)):
+    os.remove('./Images/Graphes/' + files[i])
+os.remove('./Stock.dbm')
+
 W_Main = Tk()
 Pmw.initialise(W_Main)
 
@@ -29,58 +35,13 @@ W_Main.resizable(width=False, height=True)
 
 DB_Rq = anydbm.open('Requetes.dbm', 'c')
 PDF_titles = anydbm.open('PDF_Titles.dbm', 'c')
-Stock = {}
+Stock = anydbm.open('Stock.dbm', 'c')
 
-
-# Fonction alert : fonction qui sert de palliatif avant implémentation finale
-def alert():
-    showinfo("alerte", "Bravo!")
-
-# def Login():
-
-#     def Valid_Login(*w):
-#         username = Entry_Nam_User.get()
-#         pswd = base64.b64encode(Entry_Pswd.get())
-#         if len(username) == 0:
-#             showerror("Alerte", "Entrez vos identifiants")
-#             Log("Login Error")
-#         else:
-#             Log("Login "+username)
-#             Send_Dat(), username, pswd)
-#             W_Login.destroy()
-
-#     W_Login = Toplevel()
-#     W_Login.title("Connexion")
-
-#     label_Nam_User = Label(W_Login, text='Username ')
-#     label_Nam_User.grid(row=0, column=0)
-#     Entry_Nam_User = Entry(W_Login, width=20)
-#     Entry_Nam_User.grid(row=0, column=1)
-
-#     label_Pswd = Label(W_Login, text='Password ')
-#     label_Pswd.grid(row=1, column=0)
-#     Entry_Pswd = Entry(W_Login, width=20, show='*')
-#     Entry_Pswd.grid(row=1, column=1)
-
-#     Entry_Pswd.bind("<Return>", Valid_Login)
-
-#     Butt_Valid_Nam = Button(
-#         W_Login, text='Ok', relief=GROOVE, command=Valid_Login)
-#     Butt_Valid_Nam.grid(row=1, column=2)
-
-###########################################################################
-# A essayer : changer W_Data du menubar (Send_Data) par Frame_Data
-# A controler avec un showalerte Name_tab_Data (voir commentaire)
-# Permettrait d'utiliser le nom des onglets comme références pour 
-# Test et graphiques (TAB DATA 0 -> DATA 0 -> GRAPH 0)
-# Puis modifier en fonction le fichier Statistiques.py pour 
-# Ajouter les paramètres aux foncionts
-###########################################################################
 
 List_Tab_Name = []
 
 
-def Send_Data(query, user, pwd, stock):
+def Send_Data(query, user, pwd):
 
     def Exit_Data_Display():
         Tab_Data.delete(Pmw.SELECT)
@@ -99,7 +60,7 @@ def Send_Data(query, user, pwd, stock):
     Name_Tab_Data = 'Data ' + str(len(List_Tab_Name))
 
     # Create a reference with the name of the file linked for each request
-    stock[str(Name_Tab_Data)] = "./Donnees/data_" + \
+    Stock[str(Name_Tab_Data)] = "./Donnees/data_" + \
         str(len(List_Tab_Name)) + ".pkl"
 
     if data:
@@ -159,23 +120,23 @@ def Send_Data(query, user, pwd, stock):
             Menubar_Data = Menu(Frame_Data)
 
             menu1 = Menu(Menubar_Data, tearoff=0)
-            menu1.add_command(label="Shapiro", command=lambda: Statistiques.Shapiro(stock[str(Tab_Data.getcurselection())]))
-            menu1.add_command(label="Student", command=lambda: Statistiques.Student(stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Shapiro", command=lambda: Statistiques.Shapiro(Stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Student", command=lambda: Statistiques.Student(Stock[str(Tab_Data.getcurselection())]))
             menu1.add_command(
-                label="Kruskall-Wallis", command=lambda: Statistiques.Kruskall_wallis(stock[str(Tab_Data.getcurselection())]))
+                label="Kruskall-Wallis", command=lambda: Statistiques.Kruskall_wallis(Stock[str(Tab_Data.getcurselection())]))
 
-            menu1.add_command(label="Wilcoxon", command=lambda: Statistiques.Wilcoxon(stock[str(Tab_Data.getcurselection())]))
-            menu1.add_command(label="Pearson", command=lambda: Statistiques.Pearson(stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Wilcoxon", command=lambda: Statistiques.Wilcoxon(Stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Pearson", command=lambda: Statistiques.Pearson(Stock[str(Tab_Data.getcurselection())]))
             Menubar_Data.add_cascade(label="Statistiques", menu=menu1)
 
             menu2 = Menu(Menubar_Data, tearoff=0)
             menu2.add_command(
-                label="Diagramme en bâtons", command=lambda: Graphiques.Diagram_Stick(stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="Courbe", command=lambda: Graphiques.Curves(stock[str(Tab_Data.getcurselection())]))
+                label="Diagramme en bâtons", command=lambda: Graphiques.Diagram_Stick(Stock[str(Tab_Data.getcurselection())]))
+            menu2.add_command(label="Courbe", command=lambda: Graphiques.Curves(Stock[str(Tab_Data.getcurselection())]))
             menu2.add_command(
-                label="Boite a moustaches", command=lambda: Graphiques.Box_Plot(stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="DotPlot", command=lambda: Graphiques.Dot_Plot(stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="Histogram", command=lambda: Graphiques.Histogram(stock[str(Tab_Data.getcurselection())]))
+                label="Boite a moustaches", command=lambda: Graphiques.Box_Plot(Stock[str(Tab_Data.getcurselection())]))
+            menu2.add_command(label="DotPlot", command=lambda: Graphiques.Dot_Plot(Stock[str(Tab_Data.getcurselection())]))
+            menu2.add_command(label="Histogram", command=lambda: Graphiques.Histogram(Stock[str(Tab_Data.getcurselection())]))
             Menubar_Data.add_cascade(label="Graphiques", menu=menu2)
 
             W_Data.config(menu=Menubar_Data)
@@ -188,7 +149,7 @@ def Send_Data(query, user, pwd, stock):
             # Add to the latex file
             Butt_Pdf = Button(
                 W_Data, text="Ajouter au PDF",
-                command=lambda: Reporting.Insert_PDF(1))
+                command=lambda: Reporting.Insert_PDF(1, Stock[str(Tab_Data.getcurselection())]))
             Butt_Pdf.pack(side=RIGHT)
 
         else:
@@ -199,8 +160,6 @@ def Send_Data(query, user, pwd, stock):
 
             # Update the number of the Tab in the List_Tab_Name list
             List_Tab_Name.append(Name_Tab_Data)
-
-            print 
 
             # Creation of the area to display datas
             Frame_Data = Frame(Tab)
@@ -242,8 +201,6 @@ def Send_Data(query, user, pwd, stock):
 
 # Save query in order to use it later
 def Seriz_Rq(Name_Rq):
-
-    print Name_Rq
 
     # Check if the name of the new query does already exist
     # if yes, pop-up a new window to get a new name for the query
@@ -318,7 +275,7 @@ def Click_Rq_Valid():
     if len(query) == 1:
         Label_Error_Txt.set("Requête non-envoyée : Champs requête vide")
     else:
-        Send_Data(query, username, pswd, Stock)
+        Send_Data(query, username, pswd)
 
 
 # Function to check if there is a query to save then send it to save
@@ -340,11 +297,6 @@ def Exit():
     DB_Rq.close()
     PDF_titles.close()
     W_Main.destroy()
-
-    # Clearing tmp files such as Graphs
-    files = os.listdir('./Images/Graphes/')
-    for i in range(0, len(files)):
-        os.remove('./Images/Graphes/' + files[i])
 
 
 # Main Menubar
