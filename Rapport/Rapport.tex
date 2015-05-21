@@ -1,0 +1,51 @@
+\documentclass[a4paper,12pt]{report}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[francais]{babel}
+\usepackage{graphicx} 
+\usepackage{enumitem}
+\usepackage{underscore}
+\usepackage{float}
+\usepackage{array}
+\usepackage{soul}
+\usepackage{ulem}
+\usepackage{amsmath}
+\usepackage{sectsty}
+\usepackage{geometry}
+\usepackage{titlesec} 
+\usepackage{titletoc}
+\usepackage{vmargin}
+\usepackage{verbatim}
+\usepackage{fancyvrb}
+\usepackage{fancyhdr}
+\usepackage{eurosym}
+\usepackage{color}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+\makeatletter
+\setlength{\headheight}{11.0pt}
+\renewcommand{\headrulewidth}{1pt}
+\titlespacing*{\chapter}
+  {0pt}     % retrait à gauche
+  {0pt}     % espace avant
+  {30pt}    % espace après
+   [0pt]    % retrait à droite
+% Style du titre de chapitre
+\titleformat{\chapter}[frame]{\huge\normalfont\sc}{\filright\footnotesize\enspace CHAPITRE \thechapter\enspace}{8pt}{\filcenter}{}
+% Style de titre de section
+\titleformat{\subsection}[hang]{\bfseries\sc}{\Large\thesubsection}{1em}{}
+% Mise en place du Sommaire
+\titlecontents{chapter}[3em]{\addvspace{1em plus 0pt}\bfseries\Large}{\contentslabel{2em}}{\hspace{-1.3em}}{\hfill\contentspage}[\addvspace{3pt}]
+\begin{document}
+%titre
+\begin{center}
+\LARGE{Compte rendu statistique} \
+\end{center}
+\part{ Titre}
+ \begin{figure}[H]
+\centering 
+\includegraphics[scale=0.5]{../Images/Graphes/Courbe0.eps}
+\end{figure}
+
+
+
+\end{document}
