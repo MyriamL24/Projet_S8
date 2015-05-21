@@ -1,0 +1,68 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http;//www.w3.org/1999/xhtml" xml:lang="fr">
+	<head>
+		<title> Installation Statn'Dat </title>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+		<link rel = "stylesheet" media="screen" type="text/css" title="Style Aide" href = "Style_Aide.css"/>     
+	</head>
+	<body>
+		<h1 ALIGN="CENTER"> Installations </h1>
+		
+		<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>	
+		
+		<p class="parag"> Stat'nDat peut s'exécuter sur Linux, Windows ou Mac en 64 bits ou 32 bits, à condition que votre environnement intègre les langages nécessaires. Ainsi, Stat'nDat s'exécute avec <strong>Python 2.7</strong>, utilise le langage <strong>Latex</strong> et nécessite une base de données gérée par <strong>PostgreSQL</strong>. 
+		
+		<h3>1)  Modules complémentaires :</h3>
+		
+			<p class="parag"> Voici les différents modules et bibliothèques Python qui sont importés dans Stat'nDat. Pensez à vérifier avant d'exécuter l'application, la présence de chacun d'entre eux sur l'environnement que vous utilisez.	</p>		
+			<ul>
+				<li> Tkinter</li>
+				<li> tkMessageBox</li>
+				<li> anydbm </li>
+				<li> Pmw </li>
+				<li> ttk </li>
+				<li> os </li>
+				<li> PIL </li>
+				<li> matplotlib </li>
+				<li> scipy </li>
+				<li> psycopg2 </li>
+				<li> pickle </li>
+				<li> time </li>
+			</ul>			
+			
+			<dl>
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Pmw </strong></dd>
+				<p class="parag"> C'est la bibliothèque Python qui sert à afficher tous les <strong>widgets de l'interface</strong>. Nous l'avons fournie dans le dossier de l'application :  "python-pmw_1.3.2.orig.tar.gz".
+				Pour l'installer sous Linux ou MacOS, décompressez le dossier puis tapez cette commande dans votre console : sudo python setu.py install </p>
+				
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Matplotlib </strong></dd>
+				<p class="parag"> Pour afficher les <strong>graphiques</strong>. Cette bibliothèque n'est pas fournie par défaut, avec un OS Linux, la commande "sudo apt-get install matplotlib" suffit. En revanche, sur un système windows, vous pourrez trouver le fichier d'exécution ici : 
+				</p>
+				
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Scipy</strong></dd>
+				<p class="parag"> Cette bibliothèque non fournie par défaut est utilisée par notre application pour générer les calculs <strong>statistiques</strong>. Tout comme pour Matplotlib, Linux permet directe en utilisant la commande "sudo apt-get install scipy" </p>
+			</dl>
+				
+		<h3>2)  Dossiers et fichiers :</h3>
+			<p class="parag">
+			Stat'nDat comprend trois dossiers : 
+			<ul>
+				<li> Images </li><ul>
+					<li> Icones </li>
+					<li> Graphiques </li> </ul>				
+				<li> Rapport </li>
+				<li> Donnees </li>
+			</ul>
+		Merci de bien vouloir vérifier la présence de ces dossiers avant toute exécution afin d'éviter les rapports d'erreur. Par ailleurs, le dossier Rapport doit obligatoire contenir un fichier .tex nommé "file.tex". 	</p>
+		
+		<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>	
+		
+		<font size=-1>
+		<center><P ALIGN="CENTER"> Stat'nDat - 11 Mai 2015 <a href="aide.html"> Accueil</a> <a href="Requetes.html"> Lancez une requête</a>
+	</body>
+</html>

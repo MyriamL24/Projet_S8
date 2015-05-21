@@ -1,0 +1,44 @@
+body	{
+		background-color : rgb(196, 219, 255)
+		}
+
+h3		{
+		font-size : x-large;
+		color : rgb(65,0,136);
+		text-decoration : underline;
+
+		}
+		
+h4 		{	
+		margin-left: 30px;
+		color : rgb(40,48,81);
+		text-decoration : underline;
+		font-size : large;
+		}	
+		
+.parag	{
+		width: 825px; 
+		text-align: justify;
+		}
+		
+.tiret	{
+		width: 900px;
+		color : rgb(40,48,81);
+		text-decoration : underline;
+		font-size : large;
+		}
+		
+.requ	{
+		color : rgb(125,125,125);
+		}
+
+.command{
+		border-left: 2px solid #d4d0c8;
+		border-right: 2px solid #d4d0c8;
+		font-family: Tahoma;
+		color: black;
+		font-size: 10pt;
+		background-color: #d4d0c8;
+		white-space: nowrap;
+		}
+		

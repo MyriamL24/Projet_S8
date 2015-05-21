@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http;//www.w3.org/1999/xhtml" xml:lang="fr">
+	<head>
+		<title> Statistiques </title>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+		<link rel = "stylesheet" media="screen" type="text/css" title="Style Aide" href = "Style_Aide.css"/>     
+	</head>
+	<body>
+		<h1 ALIGN="CENTER"> Statistiques </h1>
+		
+		<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>	
+		
+			<p class="parag"> L'exécution des statistique se fait depuis la fenêtre d'affichage des données : ##Image##
+			
+			<dl>
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Shapiro-Wilk </strong></dd>
+				Si vous utilisez un test de Shapiro, sélectionnez UNIQUEMENT les valeurs et non les descriptions. (Si vous souhaitez garder un repère pour votre compte rendu, indiquez-le dans le nom de la colonne) : <br> 
+				<p class="requ">SELECT is failed AS Error_Rate_n100k10Louvain <br>
+				FROM ref.donnee <br>
+				WHERE graphname = 'n100k10Louvain.tlp'</p><br><br>
+				
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14><strong>Student, Wilcoxon et Pearson </strong></dd> 
+				Veillez à bien utiliser un ORDER BY pour distinguer les données en plusieurs groupes (pas plus de deux pour Student et Wilcoxon) et placez les données chiffrées à gauche, les chaînes de caractère à droite :<br>
+				<p class="requ">SELECT isfailed, user <br>
+				FROM ref.donnee <br>
+				ORDER BY user ##Image## </p><br><br>
+			
+				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14><strong>Kruskall-Wallis</strong> </dd> Si vous devez faire plusieurs distinctions de groupes, placez la caractéristique de distinction la plus 'précise', le plus à droite possible. Exemple ci-dessous avec une requête dont la caractéristique de distinction la plus précise est 'usedview' :<br>
+				<p class="requ">SELECT is failed, graphname, usedview <br>
+				FROM ref.donnee	</p>## Image tableau de données ## <br><br>
+				
+			</dl>
+			
+		<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>	
+		
+		<font size=-1>
+		<center><P ALIGN="CENTER"> Stat'nDat - 11 Mai 2015 <a href="aide.html"> Accueil</a> <a href="Graphiques.html"> Représentations graphiques </a>
+	</body>
+</html>

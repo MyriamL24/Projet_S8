@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC"-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http;//www.w3.org/1999/xhtml" xml:lang="fr">
+	<head>
+		<title> Requêtes SQL </title>
+		<meta content="text/html; charset=UTF-8" http-equiv="Content-Type">
+		<link rel = "stylesheet" media="screen" type="text/css" title="Style Aide" href = "Style_Aide.css"/>     
+	</head>
+	<body>
+		<h1 ALIGN="CENTER"> Requêtes SQL</h1>
+		
+		<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>	
+		
+		<p class="parag">  Le champs d'entrée de la fenêtre principale est prévu pour taper une requête SQL. Le point-virgule habituellement utilisé n'est pas nécessaire ici. <br>
+		Cliquez sur <img src="Images/Enregistrer.png" style="width: 30px; height: 30px;" /> pour sauvegarder votre requête si vous souhaitez la réutiliser un jour. Vous devez alors lui donner un nom, qui apparaîtra dans le menu déroulant d'à côté.<br> <img src="Images/combobox.png" /><br>  
+		Pour supprimer un requête, sélectionner l'élement du menu déroulant puis cliquez sur <img src="Images/Supprimer.png"/><br>
+		Cliquez sur <img src="Images/Valider.png"/> pour envoyer la requête à PGSQL et obtenir vos données. <br> 
+		Cliquez sur <img src="Images/Effacer.png"/> pour vider le champs-texte </p>
+				
+		<h3> Connexion </h3>
+			<p class="parag"> Pour permettre au logiciel d'accéder à la base de données, veuillez modifier les lignes 17 à 19 du fichier "libndat". Complétez le nom de votre base de données dans 'database' et votre nom d'utilisateur dans 'user'. </p>
+			
+		<h3> Construction des requêtes </h3>
+			<ul> 
+				<li> Si vous utilisez un test de Shapiro, sélectionnez UNIQUEMENT les valeurs et non les descriptions. (Si vous souhaitez garder un repère pour votre compte rendu, indiquez-le dans la colonne). Exemple : <br>
+				<p class="requ">SELECT is failed AS Error_Rate_n100k10Louvain <br>
+				FROM ref.donnee <br>
+				WHERE graphname = 'n100k10Louvain.tlp'</p></li>
+				
+				<li> Dans tous les cas nécessitant l'analyse de plusieurs échantillons de données différents (les différents types de graphes par exemple), utilisez un ORDER BY dans votre commande SQL de manière à regrouper les données par échantillon. </li><br>
+				
+				<li>Vous devez placer <strong>les données chiffrées à gauche et les descriptions à droite</strong> : <br> 
+				<p class="requ"> SELECT isfailed, graphname <br>
+				FROM ref.donnee <br>
+				ORDER BY graphname <br></p> ou alors  : <br> 
+				<p class="requ"> SELECT isfailed, user, graphname <br>
+				FROM ref.donnee <br>
+				ORDER BY user, graphname </p></li>
+			</ul>	
+			
+			<center><P ALIGN="CENTER">
+		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
+		</p></center>
+		
+		<font size=-1>
+		<center><P ALIGN="CENTER"> Stat'nDat - 11 Mai 2015 <a href="aide.html"> Accueil</a> <a href="Statistiques.html"> Analyse statistique</a>
+	</body>
+</html>
