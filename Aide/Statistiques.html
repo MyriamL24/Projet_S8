@@ -13,7 +13,7 @@
 		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
 		</p></center>	
 		
-			<p class="parag"> L'exécution des statistique se fait depuis la fenêtre d'affichage des données : ##Image##
+			<p class="parag"> L'exécution des statistique se fait depuis la fenêtre d'affichage des données : <img src="Images/AccesStat.png" />
 			
 			<dl>
 				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Shapiro-Wilk </strong></dd>
@@ -24,13 +24,14 @@
 				
 				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14><strong>Student, Wilcoxon et Pearson </strong></dd> 
 				Veillez à bien utiliser un ORDER BY pour distinguer les données en plusieurs groupes (pas plus de deux pour Student et Wilcoxon) et placez les données chiffrées à gauche, les chaînes de caractère à droite :<br>
-				<p class="requ">SELECT isfailed, user <br>
+				<p class="requ">SELECT Time, graphname <br>
 				FROM ref.donnee <br>
-				ORDER BY user ##Image## </p><br><br>
+				ORDER BY user </p>
+				<p><img src="Images/ReqWilcox.png" /></p><br><br>
 			
 				<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14><strong>Kruskall-Wallis</strong> </dd> Si vous devez faire plusieurs distinctions de groupes, placez la caractéristique de distinction la plus 'précise', le plus à droite possible. Exemple ci-dessous avec une requête dont la caractéristique de distinction la plus précise est 'usedview' :<br>
 				<p class="requ">SELECT is failed, graphname, usedview <br>
-				FROM ref.donnee	</p>## Image tableau de données ## <br><br>
+				FROM ref.donnee	</p><img src="Images/TripleOrder.png" />
 				
 			</dl>
 			

@@ -13,26 +13,29 @@
 		<IMG SRC = Images/blue_line.gif WIDTH=320 HEIGHT=5>
 		</p></center>	
 		
-		<p class="parag"> La création des graphiques se fait depuis la fenêtre d'affichage des données : ##Image## </p>
+		<p class="parag"> La création des graphiques se fait depuis la fenêtre d'affichage des données : <img src="Images/AccesGraph.png" /> </p>
 		<dl>
 			<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Histogramme, Dot-Plot, Courbes</strong></dd>
 			Prenez la précaution de placer vos données chiffrées à gauche: <br> 
 			<p class="requ">SELECT is failed AS Error_Rate_n100k10Louvain <br>
 			FROM ref.donnee <br>
-			WHERE graphname = 'n100k10Louvain.tlp' </p>## Image des graphes obtenus plus données correspondantes##<br><br>
+			WHERE graphname = 'n100k10Louvain.tlp' </p><img src="Images/Courbe.png" /><br>
+			<img src="Images/Histo.png" /><br>
+			<img src="Images/DotPlot.png" /><br>
 			
 			<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Diagramme en bâtons</strong></dd>
 			Pour afficher un diagramme en bâton, vous devez regrouper chaque échantillon et calculer la moyenne de chacun d'entre eux . Vous devez également penser à placer les valeurs chiffrées à gauche : <br>
 			<p class="requ">SELECT AVG(is failed), graphname<br>
 			FROM ref.donnee <br>
 			GROUP BY graphname </p><br>
-			##Image du diagramme en bâton obtenu plus données correspondantes##<br><br>
+			<img src="Images/DiagrammeBaton.png" /><br><br>
 			
 			<dd class="tiret"><IMG SRC = Images/blueball.gif ALT = "" WIDTH=14 HEIGHT=14> <strong>Boîte à moustaches (Boxplot)</strong></dd>
 			Veillez à bien utiliser un ORDER BY pour distinguer les données en plusieurs groupes et placez les valeurs chiffrées à gauche, les chaînes de caractère à droite. Si vous utilisez plusieurs caractéristiques pour distinguer les groupes, placer la caracatéristique la plus 'précise', le plus à droite possible. Exemple d'une requête dont la caractéristique la plus précise est 'usedview') : <br>
-			<p class="requ">SELECT isfailed, graphname, usedview <br>
+			<p class="requ">SELECT Time, graphname <br>
 			FROM ref.donnee <br>
-			ORDER BY subject, graphname ##Image##</p><br><br>		
+			ORDER BY graphname </p>
+			<img src="Images/BoiteMous.png" /><br><br>		
 		</dl>
 		
 		<center><P ALIGN="CENTER">
