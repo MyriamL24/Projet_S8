@@ -7,7 +7,7 @@ from Tkinter import *
 from scipy.stats import *
 from tkMessageBox import *
 import anydbm
-import libnDat
+import LibnDat
 import Reporting
 import Pmw
 
@@ -84,7 +84,7 @@ def Display_results(result):
 # Shapiro's test using scipy module
 def Shapiro(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     try:
         res = shapiro(data[0])
@@ -107,11 +107,11 @@ def Shapiro(ref):
 # Wilcoxon's test using scipy module IndexError
 def Wilcoxon(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     # Ordering datas
     try:
-        liste = libnDat.parse_choix(data, 1, 0)
+        liste = LibnDat.parse_choix(data, 1, 0)
     except IndexError:
         showerror("Alerte",
             "Test Wilcoxon impossible :\n\n" \
@@ -135,11 +135,11 @@ def Wilcoxon(ref):
 # Students's test using scipy module
 def Student(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     # Ordering datas
     try:
-        liste = libnDat.parse_choix(data, 1, 0)
+        liste = LibnDat.parse_choix(data, 1, 0)
     except Exception:
         showerror("Alerte",
             "Test Student impossible :\n\n" \
@@ -164,11 +164,11 @@ def Student(ref):
 # Kruskall_Wallis's test using scipy module
 def Kruskall_wallis(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     # Ordering datas
     try:
-        donnees = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
+        donnees = LibnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
     except Exception:
         showerror("Alerte",
             "Test Kruskall-Wallis impossible :\n\n" \
@@ -190,11 +190,11 @@ def Kruskall_wallis(ref):
 # Pearson's test using scipy module
 def Pearson(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     # Ordering datas
     try:
-        liste = libnDat.parse_choix(data, 1, 0)
+        liste = LibnDat.parse_choix(data, 1, 0)
     except Exception:
         showerror("Alerte",
             "Test Pearson impossible :\n\n" \

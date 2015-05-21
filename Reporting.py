@@ -8,19 +8,17 @@ from Tkinter import *
 from tkMessageBox import *
 import Pmw
 import anydbm
-import libnDat
+import LibnDat
+import os
 
 
-PDF_Titles = anydbm.open('PDF_Titles.dbm', 'c')
-
-try:
-    Tek_File = open('./Rapport/Rapport.txt', 'r+')
-except IOError:
-    Tek_File = open('./Rapport/Rapport.txt', 'w')
-
+pdf_Titles = anydbm.open('PDF_Titles.dbm', 'c')
+LibnDat.Log("Ouverture du fichier 'PDF_Title.dbm'")
 
 def Generate():
-    os.system("pdflatex -output-directory=./Rapport file.tex")
+    os.chdir("Rapport")
+    os.system("pdflatex --shell-escape Rapport.tex")
+    os.chdir("..")
 
 def W_New_Section(): #case, ref):
 
@@ -29,16 +27,16 @@ def W_New_Section(): #case, ref):
         Name_New_Section = str(
                 Section_Type_Select.get()) + "{" + New_Section.get() + "}"
 
-        if Name_New_Section in PDF_Titles.keys():
+        if Name_New_Section in pdf_Titles.keys():
             showerror("Alerte", "Nom déjà utilisé")
 
         elif (len(Name_New_Section) == 0):
             showerror("Alerte", "Veuillez entrer un nom de section")
 
         else:
-            PDF_Titles[Name_New_Section] = str(
+            pdf_Titles[Name_New_Section] = str(
                 Section_Type_Select.get()) + "{" + Name_New_Section + "}"
-            Section_Select.setlist(PDF_Titles)
+            Section_Select.setlist(pdf_Titles)
             try:
                 Section_Select.selectitem(0)
             except IndexError:
@@ -88,7 +86,7 @@ def W_New_Section(): #case, ref):
 
 def Del_Section():
     try:
-        del PDF_Titles[Section_Select.get()]
+        del pdf_Titles[Section_Select.get()]
         Section_Select.setlist(PDF_Titles)
         try:
             Section_Select.selectitem(0)
@@ -111,8 +109,17 @@ def Add_to_PDF(case, ref, start, end):
 
 
 def Parse_tex(case, ref):
-    Tek_File.seek(0)
+    try:
+        Tek_File = open('./Rapport/Rapport.tex', 'r+')
+        LibnDat.Log("Ouverture du fichier 'Rapport.tex'")
+    except IOError:
+        Tek_File = open('./Rapport/Rapport.tex', 'w')
+        LibnDat.Tex_Front_Page(Tek_File)
+        Tek_File.close()
+        Tek_File = open('./Rapport/Rapport.tex', 'r+')   
+        LibnDat.Log("Fichier 'Rapport.tex' non existant, Création...")
 
+    #Tek_File.seek(0)
     Tek_Var = Tek_File.read()
 
     try:
@@ -123,6 +130,7 @@ def Parse_tex(case, ref):
         end = Tek_Var[i + len(str(Section_Select.get())):]
 
         Add_to_PDF(case, ref, start, end)
+        Tek_File.close()
         W_PDF_Main.destroy()
 
     except ValueError:
@@ -135,6 +143,8 @@ def Parse_tex(case, ref):
 
             Tek_File.write(start + "\n" + str(Section_Select.get()) + end)
 
+            Tek_File.close()
+
             Parse_tex(case, ref)
 
 
@@ -142,6 +152,8 @@ def Parse_tex(case, ref):
             Tek_File.seek(0, 2)
 
             Tek_File.write("\end{document}")
+
+            Tek_File.close()
 
             Parse_tex(case, ref)
 
@@ -159,9 +171,10 @@ def Insert_PDF(case, ref):
 
 
 def Add_Data(ref, start, end):
+    Tek_File = open('./Rapport/Rapport.tex', 'r+')
     Tek_File.seek(0)
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     Tek_File.write(start + "\n \\begin{tabular}{|")
 
@@ -185,27 +198,37 @@ def Add_Data(ref, start, end):
                 Tek_File.write(str(val) + " & ")
 
     Tek_File.write("\\hline\n \\end{tabular}\n" + '\n' + Description_Text.get("1.0", END) + '\n' + str(end))
-
+    Tek_File.close()
 
 def Add_Graph(ref, start, end):
+    Tek_File = open('./Rapport/Rapport.tex', 'r+')
     Tek_File.seek(0)
 
     Tek_File.write(
         start + "\n \\begin{figure}[H]" +
-        "\n\\centering \n\\includegraphics[scale = 0.6]" +
+        "\n\\centering \n\\includegraphics[scale=0.5]" +
         "{" + ref + "}\n")
     Tek_File.write("\\end{figure}\n" + Description_Text.get("1.0", END) + "\n" + str(end))
+    Tek_File.close()
 
 
 def Add_Results(ref, start, end):
+    Tek_File = open('./Rapport/Rapport.tex', 'r+')
     Tek_File.seek(0)
+    print "tekFile seek to 0"
 
-    Tek_File.write(start + "\n" + ref + "\n" + Description_Text.get("1.0", END) + "\n" + str(end))
-
+    Tek_File.write(start)
+    Tek_File.write("\n")
+    Tek_File.write(ref)
+    Tek_File.write("\n")
+    Tek_File.write(Description_Text.get("1.0", END))
+    Tek_File.write("\n")
+    Tek_File.write(str(end))
+    Tek_File.close()    
 
 def W_PDF(case, ref):
 
-    global Tek_File, Section_Select, Description_Text, W_PDF_Main
+    global Section_Select, Description_Text, W_PDF_Main
 
     W_PDF_Main = Toplevel()
 
@@ -223,7 +246,7 @@ def W_PDF(case, ref):
         fliparrow=True,
         selectioncommand=None,
         listheight=110,
-        scrolledlist_items=PDF_Titles)
+        scrolledlist_items=pdf_Titles)
     Section_Select.grid(row=0, column=0, pady=2, padx=2)
     Section_Select.focus_set()
     try:
@@ -271,3 +294,5 @@ def W_PDF(case, ref):
         relief=GROOVE,
         command=lambda: Parse_tex(case, ref))
     Butt_Send_to_PDF.pack(side=RIGHT, padx=2, pady=2)
+
+

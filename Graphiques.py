@@ -6,14 +6,14 @@
 import matplotlib.pyplot as plt
 from PIL import Image as NewImage
 from Tkinter import *
-import libnDat
+import LibnDat
 import Reporting
 import Pmw
 import anydbm
 
 List_Images = []
 Stock = anydbm.open('Stock.dbm', 'c')
-
+LibnDat.Log("Ouverture du fichier 'Stock.dbm'")
 
 def alert():
     showinfo("alerte", "Bravo!")
@@ -21,7 +21,7 @@ def alert():
 
 # Fuction to display images
 
-def Display_Image(fichier):
+def Display_Image(fichier, fichiereps):
 
     # Part for the exit button
 
@@ -33,7 +33,7 @@ def Display_Image(fichier):
 
     Name_Tab_Graph = 'Fig. ' + str(len(List_Images))
 
-    Stock[Name_Tab_Graph] = fichier
+    Stock[Name_Tab_Graph] = fichiereps
 
 
     # Based on the Lenght of the List_Images (contains ref. to the images),
@@ -85,7 +85,7 @@ def Display_Image(fichier):
 
 def Diagram_Stick(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     h = []
     x = [_ for _ in range(len(data[0]))]
@@ -94,7 +94,8 @@ def Diagram_Stick(ref):
     width = 0.8
     plt.bar(x, h, width, color='b')
 
-    Name_Diag = "./Images/Graphes/Diag_" + str(len(List_Images))
+    Name_Diag = "./Images/Graphes/Diag" + str(len(List_Images))
+    Name1_Diag = "../Images/Graphes/Diag" + str(len(List_Images))
 
     plt.savefig(Name_Diag + ".eps")
     plt.clf()
@@ -102,13 +103,13 @@ def Diagram_Stick(ref):
     img = NewImage.open(Name_Diag + ".eps")
     img.save(Name_Diag + ".gif", "gif")
 
-    Display_Image((str(Name_Diag) + ".gif"))
-    libnDat.Log("Diagram Stick")
+    Display_Image(str(Name_Diag) + ".gif", str(Name1_Diag) + ".eps" )
+    LibnDat.Log("Diagram Stick")
 
 
 def Curves(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     x = [_ for _ in range(len(data[0]))]
     y = []
@@ -116,7 +117,8 @@ def Curves(ref):
         y.append(ligne[0])
     plt.plot(x, y, color='r')
 
-    Name_Curves = "./Images/Graphes/Courbe_" + str(len(List_Images))
+    Name_Curves = "./Images/Graphes/Courbe" + str(len(List_Images))
+    Name1_Curves = "../Images/Graphes/Courbe" + str(len(List_Images))
 
     plt.savefig(Name_Curves + ".eps")
     plt.clf()
@@ -124,13 +126,13 @@ def Curves(ref):
 
     img.save(Name_Curves + ".gif", "gif")
 
-    Display_Image((str(Name_Curves) + ".gif"))
-    libnDat.Log("Diagram Curves")
+    Display_Image(str(Name_Curves) + ".gif",str(Name1_Curves) + ".eps")
+    LibnDat.Log("Diagram Curves")
 
 
 def Dot_Plot(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     x = [_ for _ in range(len(data[0]))]
     y = []
@@ -138,7 +140,8 @@ def Dot_Plot(ref):
         y.append(ligne[0])
     plt.scatter(x, y, color='r')
 
-    Name_Dot_Plot = "./Images/Graphes/Dot_" + str(len(List_Images))
+    Name_Dot_Plot = "./Images/Graphes/Dot" + str(len(List_Images))
+    Name1_Dot_Plot = "../Images/Graphes/Dot" + str(len(List_Images))
 
     plt.savefig(Name_Dot_Plot + ".eps")
     plt.clf()
@@ -146,42 +149,44 @@ def Dot_Plot(ref):
     img = NewImage.open(Name_Dot_Plot + ".eps")
     img.save(Name_Dot_Plot + ".gif", "gif")
 
-    Display_Image((str(Name_Dot_Plot) + ".gif"))
+    Display_Image(str(Name_Dot_Plot) + ".gif",str(Name1_Dot_Plot) + ".eps")
 
 
 def Box_Plot(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
-    donnee = libnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
+    donnee = LibnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
     plt.boxplot(donnee)
 
-    Name_Box_Plot = "./Images/Graphes/Box_" + str(len(List_Images))
+    Name_Box_Plot = "./Images/Graphes/Box" + str(len(List_Images))
+    Name1_Box_Plot = "../Images/Graphes/Box" + str(len(List_Images))
 
     plt.savefig(Name_Box_Plot + ".eps")
     plt.clf()
     img = NewImage.open(Name_Box_Plot + ".eps")
     img.save(Name_Box_Plot + ".gif", "gif")
-
-    Display_Image((str(Name_Box_Plot) + ".gif"))
-    libnDat.Log("Box Plot")
+   
+    Display_Image(str(Name_Box_Plot) + ".gif",str(Name1_Box_Plot) + ".eps")
+    LibnDat.Log("Box Plot")
 
 
 def Histogram(ref):
 
-    data = libnDat.deserialize(ref)
+    data = LibnDat.deserialize(ref)
 
     y = []
     for ligne in data[0]:
         y.append(ligne[0])
     plt.hist(y)
 
-    Name_Histo = "./Images/Graphes/Histo_" + str(len(List_Images)) 
+    Name_Histo = "./Images/Graphes/Histo" + str(len(List_Images)) 
+    Name1_Histo = "./Images/Graphes/Histo" + str(len(List_Images))
 
     plt.savefig(Name_Histo + ".eps")
     plt.clf()
     img = NewImage.open(Name_Histo + ".eps")
     img.save(Name_Histo + ".gif", "gif")
 
-    Display_Image((str(Name_Histo) + ".gif"))
-    libnDat.Log("Box Plot")
+    Display_Image(str(Name_Histo) + ".gif",str(Name1_Histo) + ".eps")
+    LibnDat.Log("Box Plot")

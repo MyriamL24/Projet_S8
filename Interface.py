@@ -4,6 +4,7 @@
 # Ce programme est sous licence GPL : http://www.gnu.org/licenses/gpl-3.0.txt
 # Les auteurs sont : Amal DAHMANI, Myriam LOPEZ et Kevin JAMART
 
+'''This module is the first executed file. It permits to display the aim of Stat'nDat's GUI.'''
 
 from Tkinter import *
 from tkMessageBox import *
@@ -11,7 +12,7 @@ import anydbm
 import base64
 import Pmw
 import ttk
-import libnDat
+import LibnDat
 import Graphiques
 import Statistiques
 import Reporting
@@ -20,68 +21,79 @@ import os
 username = 'mlopez001006'
 pswd = base64.b64encode('')
 
+if not os.path.exists('./Images/Graphes/'):
+    os.makedirs('./Images/Graphes/')
+
+if not os.path.exists('./Donnees'):
+    os.makedirs('./Donnees')
+
+if not os.path.exists('./Rapport'):
+    os.makedirs('./Rapport')
+
 # Clearing previous tmp files such as Graphs
 files = os.listdir('./Images/Graphes/')
 for i in range(0, len(files)):
     os.remove('./Images/Graphes/' + files[i])
 os.remove('./Stock.dbm')
 
-W_Main = Tk()
-Pmw.initialise(W_Main)
+w_main = Tk()
+Pmw.initialise(w_main)
 
-W_Main.title('Better bet on Bacon\'')
-W_Main.geometry("550x250+50+50")
-W_Main.resizable(width=False, height=True)
+w_main.title('Stat & Dat')
+w_main.geometry("550x250+50+50")
+w_main.resizable(width=False, height=True)
 
-DB_Rq = anydbm.open('Requetes.dbm', 'c')
-PDF_titles = anydbm.open('PDF_Titles.dbm', 'c')
-Stock = anydbm.open('Stock.dbm', 'c')
+db_rq = anydbm.open('Requetes.dbm', 'c')
+pdf_titles = anydbm.open('PDF_Titles.dbm', 'c')
+stock = anydbm.open('Stock.dbm', 'c')
 
 
-List_Tab_Name = []
+list_tab_name = []
 
 
 def Send_Data(query, user, pwd):
+    '''Called  by 'click_Rq_valid', this function can send the query to PGSQL and displays then all datas'''
 
     def Exit_Data_Display():
-        Tab_Data.delete(Pmw.SELECT)
-        if Tab_Data.index(Pmw.END, forInsert=True) == 0:
+        '''Close the tab of displayed data'''
+        tab_data.delete(Pmw.SELECT)
+        if tab_data.index(Pmw.END, forInsert=True) == 0:
             W_Data.destroy()
-            List_Tab_Name[:] = []
+            list_tab_name[:] = []
 
     # Catch data into a variable
-    data = libnDat.connexion(query, user, pwd)
+    data = LibnDat.connexion(query, user, pwd)
 
     # Write datas into a dedicated file, each request get one file
-    libnDat.serialize(
-        "./Donnees/data_" + str(len(List_Tab_Name)) + ".pkl", data)
+    LibnDat.serialize(
+        "./Donnees/data_" + str(len(list_tab_name)) + ".pkl", data)
 
     # Allows to order names of the differents Tab chronologicaly
-    Name_Tab_Data = 'Data ' + str(len(List_Tab_Name))
+    Name_Tab_Data = 'Data ' + str(len(list_tab_name))
 
     # Create a reference with the name of the file linked for each request
-    Stock[str(Name_Tab_Data)] = "./Donnees/data_" + \
-        str(len(List_Tab_Name)) + ".pkl"
+    stock[str(Name_Tab_Data)] = "./Donnees/data_" + \
+        str(len(list_tab_name)) + ".pkl"
 
     if data:
-        if len(List_Tab_Name) == 0:
-            global W_Data, Tab_Data
+        if len(list_tab_name) == 0:
+            global W_Data, tab_data
 
             # Creation of the new window
             W_Data = Toplevel()
             W_Data.title("Data")
             W_Data.maxsize(width=550, height=-1)
 
-            # Update the number of the Tab in the List_Tab_Name list
-            List_Tab_Name.append(Name_Tab_Data)
+            # Update the number of the Tab in the list_tab_name list
+            list_tab_name.append(Name_Tab_Data)
 
             # Creation of the Tab widget
-            Tab_Data = Pmw.NoteBook(W_Data)
-            Tab_Data.pack(fill="both", expand=1, padx=10, pady=10)
+            tab_data = Pmw.NoteBook(W_Data)
+            tab_data.pack(fill="both", expand=1, padx=10, pady=10)
 
             # First Tab of the new window
-            Tab = Tab_Data.add(Name_Tab_Data)
-            Tab_Data.tab(Name_Tab_Data).focus_set()
+            Tab = tab_data.add(Name_Tab_Data)
+            tab_data.tab(Name_Tab_Data).focus_set()
 
             # Creation of the area to display datas
             Frame_Data = Frame(Tab)
@@ -112,31 +124,31 @@ def Send_Data(query, user, pwd):
                 Frame_Data.tree.insert('', 'end', values=item)
 
             # Add line in Log file
-            libnDat.Log(("Query sent : " + query))
+            LibnDat.Log(("Query sent : " + query))
 
-            Tab_Data.setnaturalsize()
+            tab_data.setnaturalsize()
 
             # Creation of Data Menubar
             Menubar_Data = Menu(Frame_Data)
 
             menu1 = Menu(Menubar_Data, tearoff=0)
-            menu1.add_command(label="Shapiro", command=lambda: Statistiques.Shapiro(Stock[str(Tab_Data.getcurselection())]))
-            menu1.add_command(label="Student", command=lambda: Statistiques.Student(Stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Shapiro", command=lambda: Statistiques.Shapiro(stock[str(tab_data.getcurselection())]))
+            menu1.add_command(label="Student", command=lambda: Statistiques.Student(stock[str(tab_data.getcurselection())]))
             menu1.add_command(
-                label="Kruskall-Wallis", command=lambda: Statistiques.Kruskall_wallis(Stock[str(Tab_Data.getcurselection())]))
+                label="Kruskall-Wallis", command=lambda: Statistiques.Kruskall_wallis(stock[str(tab_data.getcurselection())]))
 
-            menu1.add_command(label="Wilcoxon", command=lambda: Statistiques.Wilcoxon(Stock[str(Tab_Data.getcurselection())]))
-            menu1.add_command(label="Pearson", command=lambda: Statistiques.Pearson(Stock[str(Tab_Data.getcurselection())]))
+            menu1.add_command(label="Wilcoxon", command=lambda: Statistiques.Wilcoxon(stock[str(tab_data.getcurselection())]))
+            menu1.add_command(label="Pearson", command=lambda: Statistiques.Pearson(stock[str(tab_data.getcurselection())]))
             Menubar_Data.add_cascade(label="Statistiques", menu=menu1)
 
             menu2 = Menu(Menubar_Data, tearoff=0)
             menu2.add_command(
-                label="Diagramme en bâtons", command=lambda: Graphiques.Diagram_Stick(Stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="Courbe", command=lambda: Graphiques.Curves(Stock[str(Tab_Data.getcurselection())]))
+                label="Diagramme en bâtons", command=lambda: Graphiques.Diagram_Stick(stock[str(tab_data.getcurselection())]))
+            menu2.add_command(label="Courbe", command=lambda: Graphiques.Curves(stock[str(tab_data.getcurselection())]))
             menu2.add_command(
-                label="Boite a moustaches", command=lambda: Graphiques.Box_Plot(Stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="DotPlot", command=lambda: Graphiques.Dot_Plot(Stock[str(Tab_Data.getcurselection())]))
-            menu2.add_command(label="Histogram", command=lambda: Graphiques.Histogram(Stock[str(Tab_Data.getcurselection())]))
+                label="Boite a moustaches", command=lambda: Graphiques.Box_Plot(stock[str(tab_data.getcurselection())]))
+            menu2.add_command(label="DotPlot", command=lambda: Graphiques.Dot_Plot(stock[str(tab_data.getcurselection())]))
+            menu2.add_command(label="Histogram", command=lambda: Graphiques.Histogram(stock[str(tab_data.getcurselection())]))
             Menubar_Data.add_cascade(label="Graphiques", menu=menu2)
 
             W_Data.config(menu=Menubar_Data)
@@ -149,17 +161,17 @@ def Send_Data(query, user, pwd):
             # Add to the latex file
             Butt_Pdf = Button(
                 W_Data, text="Ajouter au PDF",
-                command=lambda: Reporting.Insert_PDF(1, Stock[str(Tab_Data.getcurselection())]))
+                command=lambda: Reporting.Insert_PDF(1, stock[str(tab_data.getcurselection())]))
             Butt_Pdf.pack(side=RIGHT)
 
         else:
 
             # New Tab creation happens when Data window already exist
-            Tab = Tab_Data.add(Name_Tab_Data)
-            Tab_Data.selectpage(Name_Tab_Data)
+            Tab = tab_data.add(Name_Tab_Data)
+            tab_data.selectpage(Name_Tab_Data)
 
-            # Update the number of the Tab in the List_Tab_Name list
-            List_Tab_Name.append(Name_Tab_Data)
+            # Update the number of the Tab in the list_tab_name list
+            list_tab_name.append(Name_Tab_Data)
 
             # Creation of the area to display datas
             Frame_Data = Frame(Tab)
@@ -188,23 +200,24 @@ def Send_Data(query, user, pwd):
 
             for item in data[0]:
                 Frame_Data.tree.insert('', 'end', values=item)
-            libnDat.Log(("Query sent : " + query))
+            LibnDat.Log(("Query sent : " + query))
 
-            Tab_Data.setnaturalsize()
+            tab_data.setnaturalsize()
 
     else:
 
         # In case the query send back no data
         showerror("Alerte", "Impossible de se connecter à la base")
-        libnDat.Log("Query NOT sent")
+        LibnDat.Log("Query NOT sent")
 
 
 # Save query in order to use it later
 def Seriz_Rq(Name_Rq):
-
+    '''Save query in order to use it later'''
+    '''Check if the name of the new query does already exist if yes, pop-up a new window to get a new name for the query'''
     # Check if the name of the new query does already exist
     # if yes, pop-up a new window to get a new name for the query
-    if Name_Rq in DB_Rq.keys():
+    if Name_Rq in db_rq.keys():
         showerror("Alerte", "Nom de requête déjà utilisé")
         W_Name_Rq()
 
@@ -215,30 +228,31 @@ def Seriz_Rq(Name_Rq):
 
     # Update flat file containing previously saved queries
     else:
-        DB_Rq[Name_Rq] = Rq.get("1.0", END).encode('utf8')
+        db_rq[Name_Rq] = Rq.get("1.0", END).encode('utf8')
         Label_Error_Txt.set("Requête enregistrée...")
-        libnDat.Log(("Query saved : \"" + Name_Rq + "\" : " + DB_Rq[Name_Rq]))
+        LibnDat.Log(("Query saved : \"" + Name_Rq + "\" : " + db_rq[Name_Rq]))
 
 
 # Delete a query
 def Del_Rq():
+    '''Delete selected query out from the combobox query list'''
     try:
-        del DB_Rq[List_Rq.getvalue()[0]]
-        List_Rq.setlist(DB_Rq)
+        del db_rq[List_Rq.getvalue()[0]]
+        List_Rq.setlist(db_rq)
     except IndexError:
         pass
 
 
 # Pop-up a new window to add a name and save new query
 def W_Name_Rq():
-
+    '''Pop-up a new window to add a name and save new query'''
     # Catch the new query's name, update the list_Rq (displays saved
     # queries list)
     def Add_Name_Rq():
-
+        '''Catch the new query's name, update the list_rq (displays saved queries list)'''
         Name_Rq = Entry_Name_Rq.get()
         Seriz_Rq(Name_Rq)
-        List_Rq.setlist(DB_Rq)
+        List_Rq.setlist(db_rq)
         W_Entry.destroy()
 
     # New window
@@ -258,16 +272,18 @@ def W_Name_Rq():
 
 # Catch saved query on click and send it to the query field
 def Click_Rq_Insert():
+    '''Catch saved query on click and send it to the query field'''
     try:
         # First delete query field occupation
         Rq.delete("1.0", END)
-        Rq.insert(INSERT, DB_Rq[List_Rq.getvalue()[0]])
+        Rq.insert(INSERT, db_rq[List_Rq.getvalue()[0]])
     except IndexError:
         showerror("Alerte", "Aucune requête sélectionnée")
 
 
 # Function to send on click the query
 def Click_Rq_Valid():
+    '''Function to send on click the query : Called by validation-button, on main window of GUI, this function calls then 'send_data' who send query to database and gets results'''
     query = Rq.get("1.0", END)
     Rq.tag_add(SEL, "1.0", END)
 
@@ -280,6 +296,7 @@ def Click_Rq_Valid():
 
 # Function to check if there is a query to save then send it to save
 def Click_Rq_Save():
+    '''Function to check if there is a query to save then send it to save. Adds a new query to the combobox query list'''
     if len(Rq.get("1.0", END)) != 1:
         W_Name_Rq()
     else:
@@ -288,50 +305,53 @@ def Click_Rq_Save():
 
 # Clear the query field
 def Click_Rq_Erase():
+    '''Clear the query field'''
     Rq.delete("1.0", END)
     Label_Error_Txt.set("Clear")
 
 
 # Exit function to close the program
 def Exit():
-    DB_Rq.close()
-    PDF_titles.close()
-    W_Main.destroy()
+    '''Exit function to close the program'''
+    db_rq.close()
+    pdf_titles.close()
+    w_main.destroy()
 
 
 # Main Menubar
-Menubar_Main = Menu(W_Main)
+menubar_main = Menu(w_main)
 
-menu1 = Menu(Menubar_Main, tearoff=0)
+menu1 = Menu(menubar_main, tearoff=0)
 menu1.add_command(label="Quitter", command=Exit)
-Menubar_Main.add_cascade(label="Fichier", menu=menu1)
+menubar_main.add_cascade(label="Fichier", menu=menu1)
 
-menu2 = Menu(Menubar_Main, tearoff=0)
+menu2 = Menu(menubar_main, tearoff=0)
 menu2.add_command(label="Editer le PDF", command=Reporting.Generate)
-Menubar_Main.add_cascade(label="Editer", menu=menu2)
+menubar_main.add_cascade(label="Editer", menu=menu2)
 
-menu3 = Menu(Menubar_Main, tearoff=0)
-Menubar_Main.add_cascade(label="Aide", menu=menu3)
+menu3 = Menu(menubar_main, tearoff=0)
+menu3.add_command(label="Aide", command=LibnDat.display_help)
+menubar_main.add_cascade(label="Aide", menu=menu3)
 
-W_Main.config(menu=Menubar_Main)
+w_main.config(menu=menubar_main)
 
 Ico_Save2 = PhotoImage(file='./Images/Icones/Ico_Save2.gif')
 Ico_Check2 = PhotoImage(file='./Images/Icones/Ico_Check2.gif')
-Ico_Cross2 = PhotoImage(file='./Images/Icones/Ico_Cross2.gif')
+Ico_Eraser2 = PhotoImage(file='./Images/Icones/Ico_Eraser2.gif')
 
 
-# Frames Main Window (W_Main)
-Frame_Error = Frame(W_Main, heigh=15)
+# Frames Main Window (w_main)
+Frame_Error = Frame(w_main, heigh=15)
 Frame_Error.pack(side=BOTTOM, fill=BOTH)
 
-Frame_Rq = Frame(W_Main)
+Frame_Rq = Frame(w_main)
 Frame_Rq.pack(side=LEFT, fill=Y)
 
 Frame_Butt = Frame(Frame_Rq)
 Frame_Butt.pack(side=BOTTOM, fill=X, pady=2)
 
-List_Rq = Pmw.ScrolledListBox(W_Main,
-                              items=DB_Rq,
+List_Rq = Pmw.ScrolledListBox(w_main,
+                              items=db_rq,
                               labelpos='n',
                               label_text='Requêtes enregistrées',
                               listbox_height=11,
@@ -358,11 +378,11 @@ Rq.insert(INSERT, "Entrez votre requête")
 Butt_Exit = Button(Frame_Error, text="Quitter", relief=FLAT, command=Exit)
 Butt_Exit.pack(side=RIGHT, padx=2, pady=2)
 
-Butt_Del = Button(W_Main, text="Supprimer", command=Del_Rq)
+Butt_Del = Button(w_main, text="Supprimer", command=Del_Rq)
 Butt_Del.pack(side=BOTTOM, padx=3)
 
 Butt_Rq_Clear = Button(
-    Frame_Butt, image=Ico_Cross2, relief=GROOVE, command=Click_Rq_Erase)
+    Frame_Butt, image=Ico_Eraser2, relief=GROOVE, command=Click_Rq_Erase)
 Butt_Rq_Clear.pack(side=RIGHT, padx=2)
 Bal_Rq_Clear = Pmw.Balloon(Butt_Rq_Clear)
 Bal_Rq_Clear.bind(Butt_Rq_Clear, 'Effacer le champ')
@@ -380,4 +400,4 @@ Bal_Rq_Valid = Pmw.Balloon(Butt_Rq_Valid)
 Bal_Rq_Valid.bind(Butt_Rq_Valid, 'Valider la requête')
 
 
-W_Main.mainloop()
+w_main.mainloop()
