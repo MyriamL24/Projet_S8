@@ -11,9 +11,11 @@ import anydbm
 import LibnDat
 import os
 
-
-pdf_Titles = anydbm.open('PDF_Titles.dbm', 'c')
+fichier=open("chemins.txt", "r")
+fichier.seek(88)
+pdf_Titles = anydbm.open(fichier.readline().rstrip(), 'c')
 LibnDat.Log("Ouverture du fichier 'PDF_Title.dbm'")
+fichier.close()
 
 def Generate():
     os.chdir("Rapport")
@@ -109,14 +111,18 @@ def Add_to_PDF(case, ref, start, end):
 
 
 def Parse_tex(case, ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(222)
+    path1 = fichier.readline().rstrip()
+    fichier.close()
     try:
-        Tek_File = open('./Rapport/Rapport.tex', 'r+')
+        Tek_File = open(path1, 'r+')
         LibnDat.Log("Ouverture du fichier 'Rapport.tex'")
     except IOError:
-        Tek_File = open('./Rapport/Rapport.tex', 'w')
+        Tek_File = open(path1, 'w')
         LibnDat.Tex_Front_Page(Tek_File)
         Tek_File.close()
-        Tek_File = open('./Rapport/Rapport.tex', 'r+')   
+        Tek_File = open(path1, 'r+')   
         LibnDat.Log("Fichier 'Rapport.tex' non existant, Création...")
 
     #Tek_File.seek(0)
@@ -171,7 +177,12 @@ def Insert_PDF(case, ref):
 
 
 def Add_Data(ref, start, end):
-    Tek_File = open('./Rapport/Rapport.tex', 'r+')
+    fichier=open("chemins.txt", "r")
+    fichier.seek(222)
+    path1 = fichier.readline().rstrip()
+    fichier.close()
+
+    Tek_File = open(path1, 'r+')
     Tek_File.seek(0)
 
     data = LibnDat.deserialize(ref)
@@ -201,7 +212,12 @@ def Add_Data(ref, start, end):
     Tek_File.close()
 
 def Add_Graph(ref, start, end):
-    Tek_File = open('./Rapport/Rapport.tex', 'r+')
+    fichier=open("chemins.txt", "r")
+    fichier.seek(222)
+    path1 = fichier.readline().rstrip()
+    fichier.close()
+
+    Tek_File = open(path1, 'r+')
     Tek_File.seek(0)
 
     Tek_File.write(
@@ -213,7 +229,12 @@ def Add_Graph(ref, start, end):
 
 
 def Add_Results(ref, start, end):
-    Tek_File = open('./Rapport/Rapport.tex', 'r+')
+    fichier=open("chemins.txt", "r")
+    fichier.seek(222)
+    path1 = fichier.readline().rstrip()
+    fichier.close()
+    
+    Tek_File = open(path1, 'r+')
     Tek_File.seek(0)
     print "tekFile seek to 0"
 

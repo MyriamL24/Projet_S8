@@ -12,7 +12,13 @@ import Pmw
 import anydbm
 
 List_Images = []
-Stock = anydbm.open('Stock.dbm', 'c')
+
+fichier=open("chemins.txt", "r")
+fichier.seek(103)
+path1 = fichier.readline().rstrip()
+fichier.close()
+
+Stock = anydbm.open(path1, 'c')
 LibnDat.Log("Ouverture du fichier 'Stock.dbm'")
 
 def alert():
@@ -84,6 +90,11 @@ def Display_Image(fichier, fichiereps):
 
 
 def Diagram_Stick(ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(244)
+    path2 = fichier.readline().rstrip()
+    path3 = fichier.readline().rstrip()
+    fichier.close()
 
     data = LibnDat.deserialize(ref)
 
@@ -94,8 +105,8 @@ def Diagram_Stick(ref):
     width = 0.8
     plt.bar(x, h, width, color='b')
 
-    Name_Diag = "./Images/Graphes/Diag" + str(len(List_Images))
-    Name1_Diag = "../Images/Graphes/Diag" + str(len(List_Images))
+    Name_Diag = path2 + str(len(List_Images))
+    Name1_Diag = path3 + str(len(List_Images))
 
     plt.savefig(Name_Diag + ".eps")
     plt.clf()
@@ -108,6 +119,11 @@ def Diagram_Stick(ref):
 
 
 def Curves(ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(244)
+    path4 = fichier.readline().rstrip()
+    path5 = fichier.readline().rstrip()
+    fichier.close()
 
     data = LibnDat.deserialize(ref)
 
@@ -117,8 +133,8 @@ def Curves(ref):
         y.append(ligne[0])
     plt.plot(x, y, color='r')
 
-    Name_Curves = "./Images/Graphes/Courbe" + str(len(List_Images))
-    Name1_Curves = "../Images/Graphes/Courbe" + str(len(List_Images))
+    Name_Curves = path4 + str(len(List_Images))
+    Name1_Curves = path5 + str(len(List_Images))
 
     plt.savefig(Name_Curves + ".eps")
     plt.clf()
@@ -131,6 +147,11 @@ def Curves(ref):
 
 
 def Dot_Plot(ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(338)
+    path6 = fichier.readline().rstrip()
+    path7 = fichier.readline().rstrip()
+    fichier.close()
 
     data = LibnDat.deserialize(ref)
 
@@ -140,8 +161,8 @@ def Dot_Plot(ref):
         y.append(ligne[0])
     plt.scatter(x, y, color='r')
 
-    Name_Dot_Plot = "./Images/Graphes/Dot" + str(len(List_Images))
-    Name1_Dot_Plot = "../Images/Graphes/Dot" + str(len(List_Images))
+    Name_Dot_Plot = path6 + str(len(List_Images))
+    Name1_Dot_Plot = path7 + str(len(List_Images))
 
     plt.savefig(Name_Dot_Plot + ".eps")
     plt.clf()
@@ -153,14 +174,19 @@ def Dot_Plot(ref):
 
 
 def Box_Plot(ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(381)
+    path8 = fichier.readline().rstrip()
+    path9 = fichier.readline().rstrip()
+    fichier.close()
 
     data = LibnDat.deserialize(ref)
 
     donnee = LibnDat.parse_choix(data, len(data[1]) - 1, len(data[1]) - 2)
     plt.boxplot(donnee)
 
-    Name_Box_Plot = "./Images/Graphes/Box" + str(len(List_Images))
-    Name1_Box_Plot = "../Images/Graphes/Box" + str(len(List_Images))
+    Name_Box_Plot = path8 + str(len(List_Images))
+    Name1_Box_Plot = path9 + str(len(List_Images))
 
     plt.savefig(Name_Box_Plot + ".eps")
     plt.clf()
@@ -172,6 +198,11 @@ def Box_Plot(ref):
 
 
 def Histogram(ref):
+    fichier=open("chemins.txt", "r")
+    fichier.seek(424)
+    path10 = fichier.readline().rstrip()
+    path11 = fichier.readline().rstrip()
+    fichier.close()
 
     data = LibnDat.deserialize(ref)
 
@@ -180,8 +211,8 @@ def Histogram(ref):
         y.append(ligne[0])
     plt.hist(y)
 
-    Name_Histo = "./Images/Graphes/Histo" + str(len(List_Images)) 
-    Name1_Histo = "./Images/Graphes/Histo" + str(len(List_Images))
+    Name_Histo = path10 + str(len(List_Images)) 
+    Name1_Histo = path11 + str(len(List_Images))
 
     plt.savefig(Name_Histo + ".eps")
     plt.clf()
