@@ -1,0 +1,13 @@
+./Images/Graphes/
+./Donnees
+./Rapport
+./Stock.dbm
+Stat & Dat
+550x250+50+50
+Requetes.dbm
+PDF_Titles.dbm
+Stock.dbm
+./Donnees/data_
+./Images/Icones/Ico_Save2.gif
+./Images/Icones/Ico_Check2.gif
+./Images/Icones/Ico_Eraser2.gif
