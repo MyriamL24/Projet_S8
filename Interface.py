@@ -9,7 +9,6 @@
 from Tkinter import *
 from tkMessageBox import *
 import anydbm
-import base64
 import Pmw
 import ttk
 import LibnDat
@@ -19,35 +18,47 @@ import Reporting
 import os
 
 username = 'mlopez001006'
-pswd = base64.b64encode('')
+pswd = ' '
+fichier=open("chemins.txt", "r")
 
-if not os.path.exists('./Images/Graphes/'):
-    os.makedirs('./Images/Graphes/')
+path1 = fichier.readline().rstrip()
+if not os.path.exists(path1):
+    os.makedirs(path1)
 
-if not os.path.exists('./Donnees'):
-    os.makedirs('./Donnees')
+path2 = fichier.readline().rstrip()
+if not os.path.exists(path2):
+    os.makedirs(path2)
 
-if not os.path.exists('./Rapport'):
-    os.makedirs('./Rapport')
+path3 = fichier.readline().rstrip()
+if not os.path.exists(path3):
+    os.makedirs(path3)
 
+path4 = fichier.readline().rstrip()
 # Clearing previous tmp files such as Graphs
-files = os.listdir('./Images/Graphes/')
+files = os.listdir(path1)
 for i in range(0, len(files)):
-    os.remove('./Images/Graphes/' + files[i])
-os.remove('./Stock.dbm')
+    os.remove(path1 + files[i])
+os.remove(path4)
+
+titre = fichier.readline().rstrip()
+dimensions = fichier.readline().rstrip()
 
 w_main = Tk()
 Pmw.initialise(w_main)
 
-w_main.title('Stat & Dat')
-w_main.geometry("550x250+50+50")
+w_main.title(titre)
+w_main.geometry(dimensions)
 w_main.resizable(width=False, height=True)
 
-db_rq = anydbm.open('Requetes.dbm', 'c')
-pdf_titles = anydbm.open('PDF_Titles.dbm', 'c')
-stock = anydbm.open('Stock.dbm', 'c')
+requ = fichier.readline().rstrip()
+pdftit = fichier.readline().rstrip()
+donnstoc = fichier.readline().rstrip()
 
+db_rq = anydbm.open(requ, 'c')
+pdf_titles = anydbm.open(pdftit, 'c')
+stock = anydbm.open(donnstoc, 'c')
 
+fichier.close()
 list_tab_name = []
 
 
@@ -64,15 +75,19 @@ def Send_Data(query, user, pwd):
     # Catch data into a variable
     data = LibnDat.connexion(query, user, pwd)
 
+    fichier=open("chemins.txt", "r")
+    fichier.seek(113)
+    path5 = fichier.readline().rstrip()
+    fichier.close()
+
     # Write datas into a dedicated file, each request get one file
-    LibnDat.serialize(
-        "./Donnees/data_" + str(len(list_tab_name)) + ".pkl", data)
+    LibnDat.serialize(path5 + str(len(list_tab_name)) + ".pkl", data)
 
     # Allows to order names of the differents Tab chronologicaly
     Name_Tab_Data = 'Data ' + str(len(list_tab_name))
 
     # Create a reference with the name of the file linked for each request
-    stock[str(Name_Tab_Data)] = "./Donnees/data_" + \
+    stock[str(Name_Tab_Data)] = path5 + \
         str(len(list_tab_name)) + ".pkl"
 
     if data:
@@ -335,9 +350,19 @@ menubar_main.add_cascade(label="Aide", menu=menu3)
 
 w_main.config(menu=menubar_main)
 
-Ico_Save2 = PhotoImage(file='./Images/Icones/Ico_Save2.gif')
-Ico_Check2 = PhotoImage(file='./Images/Icones/Ico_Check2.gif')
-Ico_Eraser2 = PhotoImage(file='./Images/Icones/Ico_Eraser2.gif')
+fichier=open("chemins.txt", "r")
+
+fichier.seek(129)
+
+path6 = fichier.readline().rstrip()
+path7 = fichier.readline().rstrip()
+path8 = fichier.readline().rstrip()
+
+fichier.close()
+
+Ico_Save2 = PhotoImage(file=path6)
+Ico_Check2 = PhotoImage(file=path7)
+Ico_Eraser2 = PhotoImage(file=path8)
 
 
 # Frames Main Window (w_main)
